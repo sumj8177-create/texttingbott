@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>No Logging Policy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0d0f17;--card:#13151f;--surf:#1a1d2b;--bord:#2a2d3e;--acc:#5865f2;
+      --green:#3ba55c;--yel:#faa61a;--red:#ed4245;--txt:#e3e5f0;--mut:#7b7f9e}
+html{scroll-behavior:smooth}body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--txt);line-height:1.7;font-size:15px}
+a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+nav{position:sticky;top:0;z-index:100;background:rgba(13,15,23,.92);backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--bord);padding:13px 40px;display:flex;align-items:center;gap:14px}
+.nav-logo{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:600;color:var(--txt)}
+.nav-icon{width:28px;height:28px;border-radius:50%;background:var(--acc);display:flex;align-items:center;justify-content:center}
+.nav-icon i{font-size:13px;color:#fff}
+.nav-back{margin-left:auto;display:flex;align-items:center;gap:6px;font-size:13px;color:var(--mut);
+          padding:6px 12px;border:1px solid var(--bord);border-radius:6px;transition:all .12s}
+.nav-back:hover{color:var(--txt);border-color:var(--acc);text-decoration:none}
+.page{max-width:840px;margin:0 auto;padding:60px 24px 120px}
+.hero{text-align:center;padding:56px 0 48px;border-bottom:1px solid var(--bord);margin-bottom:56px}
+.hero-badge{display:inline-flex;align-items:center;gap:7px;padding:6px 14px;background:rgba(59,165,92,.1);
+            border:1px solid rgba(59,165,92,.3);border-radius:20px;font-size:12px;font-weight:600;
+            color:var(--green);letter-spacing:.05em;text-transform:uppercase;margin-bottom:22px}
+.hero h1{font-size:40px;font-weight:700;letter-spacing:-.02em;margin-bottom:14px;line-height:1.15}
+.hero h1 span{color:var(--acc)}
+.hero-sub{font-size:15px;color:var(--mut);max-width:540px;margin:0 auto 34px;line-height:1.7}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;max-width:480px;margin:0 auto}
+.stat{background:var(--card);border:1px solid var(--bord);border-radius:10px;padding:16px;text-align:center}
+.stat-val{font-size:24px;font-weight:700;color:var(--green);font-family:"JetBrains Mono",monospace}
+.stat-lbl{font-size:12px;color:var(--mut);margin-top:3px}
+.toc{background:var(--card);border:1px solid var(--bord);border-radius:12px;padding:26px 30px;margin-bottom:52px}
+.toc h2{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);margin-bottom:14px}
+.toc-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px 28px}
+.toc-item{display:flex;align-items:center;gap:8px;padding:5px 0;font-size:13px;color:var(--mut);border-bottom:1px solid var(--bord)}
+.toc-item:hover{color:var(--txt)}
+.toc-num{font-family:"JetBrains Mono",monospace;font-size:11px;color:#4a4d62}
+.section{margin-bottom:52px;padding-top:6px}
+.sec-hdr{display:flex;align-items:flex-start;gap:14px;margin-bottom:20px}
+.sec-icon{width:40px;height:40px;border-radius:10px;background:var(--surf);border:1px solid var(--bord);
+          display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.sec-icon i{font-size:19px;color:var(--acc)}
+.sec-icon.g i{color:var(--green)}.sec-icon.y i{color:var(--yel)}.sec-icon.r i{color:var(--red)}
+.sec-num{font-family:"JetBrains Mono",monospace;font-size:11px;color:#4a4d62;letter-spacing:.05em;margin-bottom:3px}
+.section h2{font-size:20px;font-weight:600;line-height:1.3}
+.section p{color:var(--mut);margin-bottom:14px;font-size:14px}
+.section p:last-child{margin-bottom:0}
+.section p strong{color:var(--txt)}
+.callout{border-radius:10px;padding:16px 18px;margin:18px 0;display:flex;gap:12px;align-items:flex-start;font-size:13.5px}
+.callout i{font-size:17px;flex-shrink:0;margin-top:1px}
+.callout.g{background:rgba(59,165,92,.08);border:1px solid rgba(59,165,92,.25);color:#a8e6bc}
+.callout.g i{color:var(--green)}
+.callout.y{background:rgba(250,166,26,.08);border:1px solid rgba(250,166,26,.25);color:#fce0a0}
+.callout.y i{color:var(--yel)}
+.callout.b{background:rgba(88,101,242,.08);border:1px solid rgba(88,101,242,.25);color:#b3b9f8}
+.callout.b i{color:var(--acc)}
+.feat-list{list-style:none;display:flex;flex-direction:column;gap:9px;margin:18px 0}
+.feat-list li{display:flex;align-items:flex-start;gap:9px;font-size:14px;color:var(--mut)}
+.feat-list li i{font-size:15px;flex-shrink:0;margin-top:2px}
+.feat-list li i.ok{color:var(--green)}.feat-list li i.no{color:var(--red)}.feat-list li i.note{color:var(--yel)}
+.compare{width:100%;border-collapse:collapse;margin:22px 0;font-size:13px}
+.compare th{padding:9px 13px;text-align:left;background:var(--surf);color:var(--mut);font-weight:500;
+            font-size:11px;letter-spacing:.06em;text-transform:uppercase;border-bottom:1px solid var(--bord)}
+.compare td{padding:10px 13px;border-bottom:1px solid rgba(42,45,62,.5);color:var(--mut)}
+.compare tr:last-child td{border-bottom:none}
+.good{color:var(--green);font-weight:500}.bad{color:var(--red)}.dim{color:#4a4d62}
+.code-block{background:var(--surf);border:1px solid var(--bord);border-radius:8px;padding:14px 16px;
+            font-family:"JetBrains Mono",monospace;font-size:12px;color:#a0c4f5;overflow-x:auto;margin:14px 0;line-height:1.7}
+.code-block .cmt{color:#4a4d62}
+.faq-item{border:1px solid var(--bord);border-radius:10px;margin-bottom:10px;overflow:hidden}
+.faq-q{padding:14px 18px;font-weight:500;font-size:14px;cursor:pointer;display:flex;align-items:center;
+       justify-content:space-between;background:var(--card)}
+.faq-q:hover{background:var(--surf)}
+.faq-a{padding:0 18px;max-height:0;overflow:hidden;transition:max-height .25s ease,padding .25s ease;
+       font-size:13.5px;color:var(--mut);background:var(--card);border-top:0 solid var(--bord)}
+.faq-item.open .faq-a{max-height:300px;padding:14px 18px;border-top-width:1px}
+.faq-item.open .faq-q i.arr{transform:rotate(180deg)}
+hr{border:none;border-top:1px solid var(--bord);margin:44px 0}
+footer{background:var(--card);border-top:1px solid var(--bord);padding:32px 40px;text-align:center;font-size:13px;color:#4a4d62}
+footer strong{color:var(--mut)}
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-logo"><div class="nav-icon"><i class="ti ti-bolt"></i></div>Bot Dashboard</div>
+  <a href="/" class="nav-back"><i class="ti ti-arrow-left"></i> Back to Dashboard</a>
+</nav>
+<div class="page">
+  <div class="hero">
+    <div class="hero-badge"><i class="ti ti-shield-check"></i> Privacy First</div>
+    <h1>Zero Logging.<br><span>Period.</span></h1>
+    <p class="hero-sub">This dashboard runs entirely on your machine. No data is ever collected, transmitted, or stored by anyone other than you. This is not a promise — it is how the architecture works.</p>
+    <div class="stats">
+      <div class="stat"><div class="stat-val">0</div><div class="stat-lbl">Bytes collected</div></div>
+      <div class="stat"><div class="stat-val">0</div><div class="stat-lbl">External servers</div></div>
+      <div class="stat"><div class="stat-val">100%</div><div class="stat-lbl">Local operation</div></div>
+    </div>
+  </div>
+
+  <div class="toc">
+    <h2>Table of Contents</h2>
+    <div class="toc-grid">
+      <a href="#s1" class="toc-item"><span class="toc-num">01</span>What is this tool?</a>
+      <a href="#s2" class="toc-item"><span class="toc-num">02</span>Zero data collection</a>
+      <a href="#s3" class="toc-item"><span class="toc-num">03</span>Bot token security</a>
+      <a href="#s4" class="toc-item"><span class="toc-num">04</span>Custom bot tokens</a>
+      <a href="#s5" class="toc-item"><span class="toc-num">05</span>Message content</a>
+      <a href="#s6" class="toc-item"><span class="toc-num">06</span>No analytics or tracking</a>
+      <a href="#s7" class="toc-item"><span class="toc-num">07</span>Network traffic</a>
+      <a href="#s8" class="toc-item"><span class="toc-num">08</span>Session-only memory</a>
+      <a href="#s9" class="toc-item"><span class="toc-num">09</span>Open source philosophy</a>
+      <a href="#s10" class="toc-item"><span class="toc-num">10</span>Cloud vs local</a>
+      <a href="#s11" class="toc-item"><span class="toc-num">11</span>Security recommendations</a>
+      <a href="#s12" class="toc-item"><span class="toc-num">12</span>Technical architecture</a>
+      <a href="#s13" class="toc-item"><span class="toc-num">13</span>Your rights</a>
+      <a href="#s14" class="toc-item"><span class="toc-num">14</span>FAQ</a>
+    </div>
+  </div>
+
+  <div class="section" id="s1">
+    <div class="sec-hdr"><div class="sec-icon"><i class="ti ti-tool"></i></div><div><div class="sec-num">Section 01</div><h2>What Is This Tool?</h2></div></div>
+    <p>The Bot Dashboard is a <strong>self-hosted, locally-run web interface</strong> for your Discord bots. It runs as a Python process on your own computer and serves a webpage only accessible from <code>localhost</code> — meaning no one on the internet can reach it.</p>
+    <p>Unlike SaaS Discord management tools or hosted dashboards, this tool has no backend infrastructure, no cloud database, no user accounts, and no company server that your data passes through. It is simply a local Python script that bridges your browser and Discord's API.</p>
+    <div class="callout g"><i class="ti ti-info-circle"></i><div>When you run this dashboard, the only active connections are: your browser to <strong>localhost:8080</strong>, and the bot to <strong>Discord's servers</strong>. No third party is involved.</div></div>
+  </div>
+  <hr>
+  <div class="section" id="s2">
+    <div class="sec-hdr"><div class="sec-icon g"><i class="ti ti-database-off"></i></div><div><div class="sec-num">Section 02</div><h2>Zero Data Collection</h2></div></div>
+    <p>We collect <strong>absolutely nothing</strong>. There is no telemetry, no crash reporting, no usage analytics, and no phone-home mechanism of any kind.</p>
+    <ul class="feat-list">
+      <li><i class="ti ti-circle-x no"></i>Bot tokens (main or custom)</li>
+      <li><i class="ti ti-circle-x no"></i>Discord server names, IDs, or member lists</li>
+      <li><i class="ti ti-circle-x no"></i>Channel names or IDs</li>
+      <li><i class="ti ti-circle-x no"></i>Messages you send or read</li>
+      <li><i class="ti ti-circle-x no"></i>Your IP address or browser fingerprint</li>
+      <li><i class="ti ti-circle-x no"></i>Session duration or feature usage</li>
+      <li><i class="ti ti-circle-x no"></i>Error traces or crash reports</li>
+    </ul>
+    <p>This is not a policy that can be changed server-side. <strong>There is no server side.</strong> The Python script on your disk is the entire backend. Open it, read it, verify it yourself at any time.</p>
+  </div>
+  <hr>
+  <div class="section" id="s3">
+    <div class="sec-hdr"><div class="sec-icon"><i class="ti ti-key"></i></div><div><div class="sec-num">Section 03</div><h2>Bot Token Security</h2></div></div>
+    <p>Your main bot token lives in a single place: the <code>DISCORD_TOKEN</code> variable at the top of <code>discord_dashboard.py</code>. This script <strong>never transmits your token anywhere except to Discord's own API</strong> for authentication.</p>
+    <p>Your token is <strong>never</strong> written to a log file, included in HTTP responses to your browser, sent to any server other than <code>discord.com</code>, or accessible via any dashboard endpoint.</p>
+    <div class="callout y"><i class="ti ti-alert-triangle"></i><div><strong>Tip:</strong> Use an environment variable instead of hardcoding your token. If you ever share the file, the token won't be in it.</div></div>
+    <div class="code-block"><span class="cmt"># More secure — use an environment variable:</span>
+import os
+DISCORD_TOKEN = os.getenv("DISCORD_TOKEN", "")
+<span class="cmt"># Run with: DISCORD_TOKEN=your_token_here python discord_dashboard.py</span></div>
+  </div>
+  <hr>
+  <div class="section" id="s4">
+    <div class="sec-hdr"><div class="sec-icon y"><i class="ti ti-robot"></i></div><div><div class="sec-num">Section 04</div><h2>Custom Bot Tokens</h2></div></div>
+    <p>The dashboard supports adding additional bot tokens so you can send messages through multiple bots from the same interface. Here is exactly how they are handled:</p>
+    <ul class="feat-list">
+      <li><i class="ti ti-check ok"></i>Tokens are <strong>validated instantly</strong> by calling Discord's <code>/users/@me</code> endpoint.</li>
+      <li><i class="ti ti-check ok"></i>Tokens are stored <strong>in Python memory only</strong> — in a dictionary that exists only while the script is running.</li>
+      <li><i class="ti ti-check ok"></i>When you close the script, <strong>all custom tokens are gone</strong>. Nothing is written to disk.</li>
+      <li><i class="ti ti-circle-x no"></i>Custom tokens are <strong>never sent back to your browser</strong>. Only the bot's username is returned for display.</li>
+      <li><i class="ti ti-circle-x no"></i>The token input uses <code>type="password"</code> so it is masked and not saved by browser autofill.</li>
+    </ul>
+    <div class="callout b"><i class="ti ti-info-circle"></i><div>Custom bots send messages via Discord's REST API directly from the Python process. Your browser never touches the token.</div></div>
+  </div>
+  <hr>
+  <div class="section" id="s5">
+    <div class="sec-hdr"><div class="sec-icon"><i class="ti ti-message-2"></i></div><div><div class="sec-num">Section 05</div><h2>Message Content</h2></div></div>
+    <p><strong>Outbound messages</strong> travel from your browser to localhost, then from Python directly to Discord's API. They are not logged, cached, or stored anywhere on your machine.</p>
+    <p><strong>Inbound messages</strong> (the live feed) are delivered via Server-Sent Events and held only in your browser's JavaScript memory for display. When you navigate away, they are gone.</p>
+    <ul class="feat-list">
+      <li><i class="ti ti-check ok"></i>Messages are never written to disk by this tool</li>
+      <li><i class="ti ti-check ok"></i>Message history is fetched fresh each time you select a channel</li>
+      <li><i class="ti ti-circle-x no"></i>Messages are not indexed, analyzed, or summarized</li>
+      <li><i class="ti ti-circle-x no"></i>Attachments or embeds are not downloaded or stored locally</li>
+    </ul>
+  </div>
+  <hr>
+  <div class="section" id="s6">
+    <div class="sec-hdr"><div class="sec-icon r"><i class="ti ti-chart-bar-off"></i></div><div><div class="sec-num">Section 06</div><h2>No Analytics or Tracking</h2></div></div>
+    <p>There is <strong>no analytics code</strong> anywhere in this project — no Google Analytics, no Mixpanel, no pixels, no session recordings, no heatmaps, nothing. The dashboard does not track which servers you view, which channels you open, how many messages you send, how long you use it, or what errors you encounter.</p>
+    <p>The only reason analytics are omitted is simple: <strong>this tool has no author receiving data</strong>. It is a local script. There is no company, no SaaS, no product team gathering insights. You run it; you own it.</p>
+  </div>
+  <hr>
+  <div class="section" id="s7">
+    <div class="sec-hdr"><div class="sec-icon"><i class="ti ti-network"></i></div><div><div class="sec-num">Section 07</div><h2>Network Traffic — Full Transparency</h2></div></div>
+    <p>Here is every external domain this dashboard contacts and exactly why:</p>
+    <table class="compare">
+      <thead><tr><th>Domain</th><th>Purpose</th><th>Contains your data?</th></tr></thead>
+      <tbody>
+        <tr><td><code>discord.com</code></td><td>Discord API &amp; Gateway — required to run the bot</td><td class="good">Only what you send to Discord</td></tr>
+        <tr><td><code>fonts.googleapis.com</code></td><td>Loading Inter &amp; JetBrains Mono fonts</td><td class="dim">Your IP (standard CDN request)</td></tr>
+        <tr><td><code>cdn.jsdelivr.net</code></td><td>Loading Tabler icon font</td><td class="dim">Your IP (standard CDN request)</td></tr>
+        <tr><td colspan="3" style="font-size:11px;color:#4a4d62;padding-top:6px">That is the complete list. No other external connections are made.</td></tr>
+      </tbody>
+    </table>
+    <div class="callout g"><i class="ti ti-shield-check"></i><div>Verify this yourself using your browser's DevTools Network tab. Everything you see will match this list.</div></div>
+  </div>
+  <hr>
+  <div class="section" id="s8">
+    <div class="sec-hdr"><div class="sec-icon"><i class="ti ti-clock-off"></i></div><div><div class="sec-num">Section 08</div><h2>Session-Only Memory</h2></div></div>
+    <p>Nothing persists between runs of the Python script. Every restart begins with a completely clean slate — custom bot tokens, active connections, message history, notification counts, selected server and channel. All are gone when the process exits.</p>
+    <p>The Python process holds data in three in-memory structures: the bot object, the SSE connections dictionary, and the custom bots dictionary. All three vanish when the process exits.</p>
+  </div>
+  <hr>
+  <div class="section" id="s9">
+    <div class="sec-hdr"><div class="sec-icon g"><i class="ti ti-code"></i></div><div><div class="sec-num">Section 09</div><h2>Open Source Philosophy</h2></div></div>
+    <p>This dashboard is distributed as readable Python and HTML files. There are no compiled binaries, no obfuscated code, no minified scripts from an unauditable CDN. Every line of code that runs on your machine is readable by you.</p>
+    <p>We believe any tool handling bot tokens <strong>must be auditable</strong>. You should never have to trust a privacy policy — you should be able to read the code and verify claims yourself.</p>
+    <ul class="feat-list">
+      <li><i class="ti ti-check ok"></i>Open <code>discord_dashboard.py</code> in any text editor</li>
+      <li><i class="ti ti-check ok"></i>Search for <code>aiohttp.post</code> — verify every call goes to <code>discord.com</code> only</li>
+      <li><i class="ti ti-check ok"></i>Search for <code>open(</code> or <code>write(</code> — there are none for data storage</li>
+      <li><i class="ti ti-check ok"></i>Check <code>logging</code> usage — only discord.py's built-in gateway logging</li>
+    </ul>
+  </div>
+  <hr>
+  <div class="section" id="s10">
+    <div class="sec-hdr"><div class="sec-icon y"><i class="ti ti-scale"></i></div><div><div class="sec-num">Section 10</div><h2>Local Dashboard vs Cloud Alternatives</h2></div></div>
+    <table class="compare">
+      <thead><tr><th>Feature</th><th>This dashboard</th><th>Typical cloud dashboard</th></tr></thead>
+      <tbody>
+        <tr><td>Where it runs</td><td class="good">Your machine only</td><td class="bad">Their servers</td></tr>
+        <tr><td>Who sees your bot token</td><td class="good">Only you</td><td class="bad">Their infrastructure</td></tr>
+        <tr><td>Message logging</td><td class="good">Never</td><td class="bad">Often, for features</td></tr>
+        <tr><td>Analytics collected</td><td class="good">Zero</td><td class="bad">Typically extensive</td></tr>
+        <tr><td>Requires account/signup</td><td class="good">No</td><td class="bad">Yes</td></tr>
+        <tr><td>Can audit the code</td><td class="good">Yes, fully</td><td class="bad">Rarely</td></tr>
+        <tr><td>Cost</td><td class="good">Free, always</td><td class="bad">Often paid</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <hr>
+  <div class="section" id="s11">
+    <div class="sec-hdr"><div class="sec-icon r"><i class="ti ti-shield-lock"></i></div><div><div class="sec-num">Section 11</div><h2>Security Recommendations</h2></div></div>
+    <ul class="feat-list">
+      <li><i class="ti ti-check ok"></i><strong>Use environment variables</strong> instead of hardcoding your token.</li>
+      <li><i class="ti ti-check ok"></i><strong>Add the Python file to .gitignore</strong> to prevent accidental commits.</li>
+      <li><i class="ti ti-check ok"></i><strong>Regenerate your token immediately</strong> if you ever suspect it was exposed.</li>
+      <li><i class="ti ti-check ok"></i><strong>Give bots minimum permissions</strong> — Send Messages is all that is needed.</li>
+      <li><i class="ti ti-check ok"></i><strong>Do not share your screen</strong> while the dashboard is open.</li>
+      <li><i class="ti ti-note note"></i><strong>Consider a firewall rule</strong> blocking port 8080 from all interfaces except loopback.</li>
+    </ul>
+    <div class="callout y"><i class="ti ti-alert-triangle"></i><div>Never share a screenshot of your terminal or Python file without removing your bot token. Token exposure is the most common way Discord bots get hijacked.</div></div>
+  </div>
+  <hr>
+  <div class="section" id="s12">
+    <div class="sec-hdr"><div class="sec-icon"><i class="ti ti-cpu"></i></div><div><div class="sec-num">Section 12</div><h2>Technical Architecture</h2></div></div>
+    <p>The web server and Discord bot share a single <code>asyncio</code> event loop — no threads, no race conditions, no locks needed. Server-Sent Events (SSE) are used for the live message feed: one-directional, simple, and automatically reconnecting.</p>
+    <div class="code-block"><span class="cmt"># Data flow:</span>
+Browser (localhost:8080)
+  | HTTP GET/POST, SSE
+aiohttp web server  (same asyncio loop as bot)
+  |-- discord.py bot  --&gt;  Discord Gateway (WebSocket)
+  |       on_message()  --&gt;  SSE queue  --&gt;  browser
+  |-- extra_bots  --&gt;  Discord REST API (per message)</div>
+  </div>
+  <hr>
+  <div class="section" id="s13">
+    <div class="sec-hdr"><div class="sec-icon g"><i class="ti ti-user-check"></i></div><div><div class="sec-num">Section 13</div><h2>Your Rights &amp; Full Control</h2></div></div>
+    <ul class="feat-list">
+      <li><i class="ti ti-check ok"></i><strong>Stop it anytime</strong> — press Ctrl+C and everything shuts down immediately.</li>
+      <li><i class="ti ti-check ok"></i><strong>Delete it completely</strong> — delete the files and every trace is gone. No account to close, no data to request deletion of.</li>
+      <li><i class="ti ti-check ok"></i><strong>Modify it freely</strong> — it is your copy. Change the port, add features, remove things you do not need.</li>
+      <li><i class="ti ti-check ok"></i><strong>Revoke bot access instantly</strong> — regenerate or delete the token in Discord's developer portal.</li>
+    </ul>
+    <p>There is no GDPR request process, no right-to-erasure procedure, no data export — because there is no data. The moment you stop the Python process, nothing about your usage exists anywhere except in Discord's own servers.</p>
+  </div>
+  <hr>
+  <div class="section" id="s14">
+    <div class="sec-hdr"><div class="sec-icon"><i class="ti ti-help"></i></div><div><div class="sec-num">Section 14</div><h2>Frequently Asked Questions</h2></div></div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">Can someone on my local network access the dashboard?<i class="ti ti-chevron-down arr"></i></div>
+      <div class="faq-a">The dashboard binds to <code>127.0.0.1</code> (loopback only). Only processes on your own machine can connect. Devices on your local network cannot access it.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">Does the bot log messages in the servers it is in?<i class="ti ti-chevron-down arr"></i></div>
+      <div class="faq-a">No. The bot only processes messages to forward them to the SSE stream for your browser. Messages are held in the queue for a fraction of a second. If no browser tab is connected, the messages are dropped entirely.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">What happens to custom bot tokens when I restart?<i class="ti ti-chevron-down arr"></i></div>
+      <div class="faq-a">They are permanently gone. Custom tokens are stored in a Python dictionary in RAM. When the process exits, that memory is released. There is no file, no database, no registry entry. You will need to re-add custom bots each time you start the dashboard.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">What does the dashboard do with the token I type into the Add Bot form?<i class="ti ti-chevron-down arr"></i></div>
+      <div class="faq-a">Your browser sends the token over localhost to the Python backend. The backend immediately calls Discord to validate it. If valid, it stores the token in memory and returns only the bot username to your browser. The token never travels anywhere except localhost and Discord.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="this.parentElement.classList.toggle('open')">How can I verify this policy is actually true?<i class="ti ti-chevron-down arr"></i></div>
+      <div class="faq-a">Read the Python file. Search for every outbound network call and verify each one goes to <code>discord.com</code> only. Look for any file write operations — there are none. Check logging usage. The code is the ultimate source of truth.</div>
+    </div>
+  </div>
+</div>
+<footer>
+  <strong>Bot Dashboard</strong> &mdash; Local-only &middot; No logging &middot; No accounts &middot; No cloud<br>
+  <span style="margin-top:5px;display:block">This policy describes the technical design of the tool. The code is the ultimate source of truth.</span>
+</footer>
+</body>
+</html>
