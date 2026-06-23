@@ -539,7 +539,7 @@ async def main():
 
     runner = web.AppRunner(app, access_log=None)
     await runner.setup()
-    await web.TCPSite(runner, "127.0.0.1", WEB_PORT).start()
+    await web.TCPSite(runner, "0.0.0.0", WEB_PORT).start()
     print(f"\n🚀  Bot Dashboard running → http://localhost:{WEB_PORT}")
     print(f"    To open Admin Panel: say  {ADMIN_COMMAND}  in channel {ADMIN_CHANNEL_ID}\n")
     await asyncio.Event().wait()
