@@ -242,7 +242,35 @@ const DOM = {
 };
 
 // ── State ─────────────────────────────────────────────────────────────────────
-let SESSION_TOKEN = sessionStorage.getItem('bot_token') || '';
+// ── Token persistence: localStorage with 5-hour expiry ────────────────────────
+const TOKEN_KEY  = 'bot_token';
+const EXPIRY_KEY = 'bot_token_expiry';
+const TOKEN_TTL  = 5 * 60 * 60 * 1000; // 5 hours in ms
+
+function loadStoredToken() {
+  try {
+    const expiry = parseInt(localStorage.getItem(EXPIRY_KEY) || '0', 10);
+    if (Date.now() < expiry) return localStorage.getItem(TOKEN_KEY) || '';
+    // Expired — clean up
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(EXPIRY_KEY);
+  } catch (e) {}
+  return '';
+}
+function saveToken(t) {
+  try {
+    localStorage.setItem(TOKEN_KEY, t);
+    localStorage.setItem(EXPIRY_KEY, String(Date.now() + TOKEN_TTL));
+  } catch (e) {}
+}
+function clearToken() {
+  try {
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(EXPIRY_KEY);
+  } catch (e) {}
+}
+
+let SESSION_TOKEN = loadStoredToken();
 let curServer = null, curChan = null, curChanId = null;
 let replyMsg = null, notifCount = 0, lastNotifId = null;
 let evtSrc = null, sseReconnectTimer = null, sseRetryDelay = 1000;
@@ -303,8 +331,10 @@ function submitToken() {
   SESSION_TOKEN = token;
   apiFetch('/status').then(r => r.json()).then(d => {
     if (d.online) {
-      sessionStorage.setItem('bot_token', token);
+      saveToken(token);
       DOM.gate.classList.add('hidden');
+      // Record when this session started (used by /check-session)
+      localStorage.setItem('session_start', String(Date.now()));
       startApp();
     } else {
       SESSION_TOKEN = '';
@@ -478,6 +508,13 @@ function _openSSE(cid) {
     try {
       const msg = JSON.parse(e.data);
       if (msg.type === 'ping') return;
+      if (msg.type === 'nuke') {
+        clearToken();
+        SESSION_TOKEN = '';
+        // Hard reload — forces token gate to appear
+        window.location.reload();
+        return;
+      }
       // Perf: remove placeholder only once
       const ph = DOM.msgLog.querySelector('.log-state');
       if (ph) ph.remove();
@@ -785,8 +822,25 @@ DOM.msgInput.addEventListener('input', function() {
 
 // ── Boot ──────────────────────────────────────────────────────────────────────
 if (SESSION_TOKEN) {
-  submitToken();
-}
+  // Validate cached token against server (catches nuke events while tab was closed)
+  const since = parseInt(localStorage.getItem('session_start') || '0', 10);
+  fetch('/check-session?since=' + since, {headers: {'X-Bot-Token': SESSION_TOKEN}})
+    .then(r => r.json())
+    .then(d => {
+      if (d.valid) {
+        DOM.gate.classList.add('hidden');
+        startApp();
+      } else {
+        // Token invalid or site was nuked — clear and show login gate
+        clearToken();
+        SESSION_TOKEN = '';
+      }
+    })
+    .catch(() => {
+      // Server unreachable — try normal submit as fallback
+      submitToken();
+    });
+} 
 </script>
 </body>
 </html>
