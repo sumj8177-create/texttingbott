@@ -546,7 +546,7 @@ async def main():
     await runner.setup()
     await web.TCPSite(runner, "0.0.0.0", WEB_PORT).start()
     print(f"\n🚀  Bot Dashboard running → http://localhost:{WEB_PORT}")
-    print(f"    To open Admin Panel: say  {ADMIN_COMMAND}  in channel {ADMIN_CHANNEL_ID}\n")
+    print(f"    Admin panel auto-unlocks when '{ADMIN_BOT_USERNAME}' logs in.\n")
     await asyncio.Event().wait()
 
 if __name__ == "__main__":
