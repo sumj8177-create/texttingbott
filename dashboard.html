@@ -496,7 +496,15 @@ function pollStatus() {
     var dot = document.getElementById("statusDot"), txt = document.getElementById("statusText");
     dot.className = "dot" + (d.online ? " online" : "");
     txt.textContent = d.online ? d.username : "offline";
-    if (d.online) refreshBotPills();
+    if (d.online) {
+      refreshBotPills();
+      // Auto-grant admin if this is the admin bot
+      if (d.is_admin && !ADMIN_USER_ID) {
+        ADMIN_USER_ID = "__auto__";
+        sessionStorage.setItem("admin_uid", "__auto__");
+        showAdminBtn();
+      }
+    }
   }).catch(function() {
     document.getElementById("statusDot").className = "dot";
     document.getElementById("statusText").textContent = "offline";
@@ -884,6 +892,11 @@ function selectBot(id){
    ADMIN PANEL
    ══════════════════════════════════════════════════════════════ */
 function checkAdminSession() {
+  // Restore auto-admin from sessionStorage if present
+  if (ADMIN_USER_ID === "__auto__") {
+    showAdminBtn();
+    return;
+  }
   if (!ADMIN_USER_ID) return;
   fetch("/admin/check").then(function(r){return r.json();}).then(function(d){
     if (d.admin) showAdminBtn();
