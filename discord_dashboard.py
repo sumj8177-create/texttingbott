@@ -1,7 +1,54 @@
 import asyncio, json, uuid, os
+import logging
 import aiohttp, discord
 from discord.ext import commands
 from aiohttp import web
+
+# ── Logging setup ─────────────────────────────────────────────────────────────
+LOG_LEVEL = os.environ.get("LOG_LEVEL", "INFO").upper()
+
+logging.basicConfig(
+    level=getattr(logging, LOG_LEVEL, logging.INFO),
+    format="%(asctime)s  %(levelname)-8s  %(name)s  %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
+
+# Quieten noisy third-party loggers
+logging.getLogger("discord").setLevel(logging.WARNING)
+logging.getLogger("discord.http").setLevel(logging.WARNING)
+logging.getLogger("aiohttp.access").setLevel(logging.WARNING)
+
+log         = logging.getLogger("dashboard")
+log_bot     = logging.getLogger("dashboard.bot")
+log_bots    = logging.getLogger("dashboard.bots")
+log_http    = logging.getLogger("dashboard.http")
+
+# ── Webhook logger ────────────────────────────────────────────────────────────
+# Store the URL in a LOG_WEBHOOK_URL env var for safety; hardcoded as fallback.
+WEBHOOK_URL = os.environ.get(
+    "LOG_WEBHOOK_URL",
+    "https://discord.com/api/webhooks/1518619561266511922/LJ8oqiCqeZ5IDhYz6mgYFfYqyGLODxYkd1PCDsMjykEKshtDySBpco2sXaDI-uvmzLua",
+)
+
+async def webhook_log(username: str, user_id: str | int, action: str, detail: str = "") -> None:
+    """Fire-and-forget: post a structured embed to the logging webhook."""
+    import datetime
+    embed = {
+        "title": action,
+        "color": 0x5865F2,
+        "fields": [
+            {"name": "User",    "value": str(username), "inline": True},
+            {"name": "User ID", "value": str(user_id),  "inline": True},
+        ],
+        "timestamp": datetime.datetime.utcnow().isoformat() + "Z",
+    }
+    if detail:
+        embed["description"] = detail
+    try:
+        async with aiohttp.ClientSession() as s:
+            await s.post(WEBHOOK_URL, json={"embeds": [embed]})
+    except Exception as exc:
+        log.warning("Failed to send webhook log: %s", exc)
 
 # Railway injects PORT automatically; fall back to 8080 for local dev
 WEB_PORT = int(os.environ.get("PORT", 8080))
@@ -27,7 +74,10 @@ async def get_bot(token: str) -> commands.Bot | None:
                 return None
             return entry["bot"]
 
+        log_bot.debug("Existing bot timed out waiting for ready (token …%s)", token[-6:]) if token in _bot_registry else None
+
         # First time we've seen this token — spin up a bot
+        log_bot.info("Spinning up new bot for token …%s", token[-6:])
         intents = discord.Intents.default()
         intents.message_content = True
         intents.guilds = True
@@ -37,7 +87,13 @@ async def get_bot(token: str) -> commands.Bot | None:
 
         @bot.event
         async def on_ready():
-            print(f"[Bot] Logged in as {bot.user} (token …{token[-6:]})")
+            log_bot.info("Logged in as %s (token …%s)", bot.user, token[-6:])
+            asyncio.create_task(webhook_log(
+                username=str(bot.user),
+                user_id=bot.user.id,
+                action="🟢 Bot Connected",
+                detail=f"Token ending `…{token[-6:]}` is now online.",
+            ))
             ready_event.set()
 
         @bot.event
@@ -63,6 +119,23 @@ async def get_bot(token: str) -> commands.Bot | None:
                 "mentions_bot": mentions_bot, "notify": is_reply_to_bot or mentions_bot,
                 "reference": ref_data,
             })
+            log_bot.debug(
+                "Message in channel %s from %s%s",
+                channel_id,
+                message.author.display_name,
+                " [reply-to-bot]" if is_reply_to_bot else (" [mentions-bot]" if mentions_bot else ""),
+            )
+            asyncio.create_task(webhook_log(
+                username=message.author.display_name,
+                user_id=message.author.id,
+                action="💬 Message Received",
+                detail=(
+                    f"**Channel:** <#{channel_id}>\n"
+                    f"**Content:** {message.content[:200] or '*[no text]*'}"
+                    + (" *(reply to bot)*" if is_reply_to_bot else "")
+                    + (" *(mentions bot)*" if mentions_bot else "")
+                ),
+            ))
             if channel_id in sse_connections:
                 for q in list(sse_connections[channel_id]):
                     await q.put(payload)
@@ -91,6 +164,7 @@ async def get_bot(token: str) -> commands.Bot | None:
         try:
             await asyncio.wait_for(ready_event.wait(), timeout=15)
         except asyncio.TimeoutError:
+            log_bot.warning("Bot did not become ready within 15 s (token …%s)", token[-6:])
             return None
         return bot
 
@@ -98,12 +172,13 @@ async def _run_bot(bot: commands.Bot, token: str):
     try:
         await bot.start(token)
     except discord.LoginFailure:
-        print(f"[Bot] Invalid token …{token[-6:]}")
+        log_bot.error("Invalid token …%s — check the token in the Developer Portal", token[-6:])
     except Exception as e:
-        print(f"[Bot] Error: {e}")
+        log_bot.exception("Unexpected error for token …%s: %s", token[-6:], e)
     finally:
         async with _registry_lock:
             _bot_registry.pop(token, None)
+        log_bot.info("Bot for token …%s has been removed from registry", token[-6:])
 
 # ── Extract token from request ────────────────────────────────────────────────
 def req_token(request: web.Request) -> str:
@@ -197,8 +272,10 @@ async def handle_history(request):
         msgs.reverse()
         return web.json_response(msgs)
     except discord.Forbidden:
+        log_http.warning("Missing Read Message History permission for channel %s", request.match_info["channel_id"])
         return web.json_response({"error": "Missing Read Message History permission"}, status=403)
     except Exception as e:
+        log_http.exception("Error fetching history for channel %s: %s", request.match_info["channel_id"], e)
         return web.json_response({"error": str(e)}, status=500)
 
 async def handle_events(request):
@@ -244,10 +321,19 @@ async def handle_send(request):
             return web.json_response({"error": "Channel not found"}, status=404)
         try:
             await channel.send(message)
+            log_http.info("Sent message to channel %s", chan_id)
+            asyncio.create_task(webhook_log(
+                username=str(bot.user),
+                user_id=bot.user.id,
+                action="📤 Message Sent",
+                detail=f"**Channel:** <#{chan_id}>\n**Content:** {message[:200]}",
+            ))
             return web.json_response({"success": True})
         except discord.Forbidden:
+            log_http.warning("Missing Send Messages permission for channel %s", chan_id)
             return web.json_response({"error": "Missing Send Messages permission"}, status=403)
         except Exception as e:
+            log_http.exception("Error sending message to channel %s: %s", chan_id, e)
             return web.json_response({"error": str(e)}, status=500)
     if bot_id not in extra_bots:
         return web.json_response({"error": "Bot not found"}, status=404)
@@ -273,12 +359,22 @@ async def handle_reply(request):
         try:
             target = await channel.fetch_message(msg_id)
             await target.reply(content)
+            log_http.info("Replied to message %s in channel %s", msg_id, chan_id)
+            asyncio.create_task(webhook_log(
+                username=str(bot.user),
+                user_id=bot.user.id,
+                action="↩️ Reply Sent",
+                detail=f"**Channel:** <#{chan_id}>\n**Reply to msg:** {msg_id}\n**Content:** {content[:200]}",
+            ))
             return web.json_response({"success": True})
         except discord.NotFound:
+            log_http.warning("Reply target message %s not found in channel %s", msg_id, chan_id)
             return web.json_response({"error": "Original message not found"}, status=404)
         except discord.Forbidden:
+            log_http.warning("Missing reply permission for channel %s", chan_id)
             return web.json_response({"error": "Missing reply permission"}, status=403)
         except Exception as e:
+            log_http.exception("Error replying to message %s in channel %s: %s", msg_id, chan_id, e)
             return web.json_response({"error": str(e)}, status=500)
     if bot_id not in extra_bots:
         return web.json_response({"error": "Bot not found"}, status=404)
@@ -300,14 +396,27 @@ async def handle_bots_add(request):
         return web.json_response({"error": "Invalid token"}, status=401)
     bid = str(uuid.uuid4())
     extra_bots[bid] = {"name": name, "token": token, "username": username}
-    print(f"[Bots] Added custom bot: {username} ({name})")
+    log_bots.info("Added custom bot: %s (%s) → id=%s", username, name, bid)
+    asyncio.create_task(webhook_log(
+        username=username,
+        user_id=bid,
+        action="➕ Custom Bot Added",
+        detail=f"**Name:** {name}",
+    ))
     return web.json_response({"success": True, "id": bid, "username": username})
 
 async def handle_bots_delete(request):
     bid = request.match_info["bot_id"]
     if bid in extra_bots:
-        print(f"[Bots] Removed: {extra_bots[bid]['username']}")
+        log_bots.info("Removed custom bot: %s (id=%s)", extra_bots[bid]["username"], bid)
+        asyncio.create_task(webhook_log(
+            username=extra_bots[bid]["username"],
+            user_id=bid,
+            action="➖ Custom Bot Removed",
+        ))
         del extra_bots[bid]
+    else:
+        log_bots.warning("Attempted to remove unknown bot id=%s", bid)
     return web.json_response({"success": True})
 
 # ── Main ──────────────────────────────────────────────────────────────────────
@@ -329,8 +438,8 @@ async def main():
     runner = web.AppRunner(app, access_log=None)
     await runner.setup()
     await web.TCPSite(runner, "0.0.0.0", WEB_PORT).start()
-    print(f"\n🚀  Bot Dashboard running on port {WEB_PORT}")
-    print(f"    Open your Railway URL and paste your bot token in the login screen.\n")
+    log.info("🚀  Bot Dashboard running on port %d (log level: %s)", WEB_PORT, LOG_LEVEL)
+    log.info("Open your Railway URL and paste your bot token in the login screen.")
 
     # Keep running indefinitely (bots are spun up on demand)
     await asyncio.Event().wait()
