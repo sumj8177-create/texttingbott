@@ -174,7 +174,7 @@ textarea::placeholder{color:var(--mut)}
     </div>
     <div class="gate-error" id="gateError"></div>
     <button class="gate-btn" id="gateBtn" onclick="submitToken()"><i class="ti ti-plug-connected"></i> Connect Bot</button>
-    <div class="gate-note"><i class="ti ti-lock" style="font-size:12px"></i> Token is never saved to disk or sent to any third party</div>
+    <div class="gate-note"><i class="ti ti-clock" style="font-size:12px"></i> Token saved for 5 hours — clears automatically after that</div>
   </div>
 </div>
 
@@ -190,6 +190,7 @@ textarea::placeholder{color:var(--mut)}
       <div class="dot" id="statusDot"></div>
       <span id="statusText">connecting...</span>
     </div>
+    <button onclick="doLogout()" style="display:flex;align-items:center;gap:5px;background:none;border:1px solid var(--bord);border-radius:6px;padding:5px 10px;color:var(--mut);font-size:12px;font-family:Inter,sans-serif;cursor:pointer;transition:all .12s" onmouseover="this.style.color='var(--red)';this.style.borderColor='var(--red)'" onmouseout="this.style.color='var(--mut)';this.style.borderColor='var(--bord)'"><i class="ti ti-logout"></i> Logout</button>
   </div>
 </div>
 <div id="ws">
@@ -235,7 +236,21 @@ textarea::placeholder{color:var(--mut)}
 <div id="toast"></div>
 <script>
 /* ── token gate ─────────────────────────────── */
-var SESSION_TOKEN = sessionStorage.getItem("bot_token") || "";
+var FIVE_HOURS = 5 * 60 * 60 * 1000;
+function saveToken(t) {
+  localStorage.setItem("bot_token", JSON.stringify({token: t, expires: Date.now() + FIVE_HOURS}));
+}
+function loadToken() {
+  try {
+    var raw = localStorage.getItem("bot_token");
+    if (!raw) return "";
+    var obj = JSON.parse(raw);
+    if (Date.now() > obj.expires) { localStorage.removeItem("bot_token"); return ""; }
+    return obj.token || "";
+  } catch(e) { return ""; }
+}
+function clearToken() { localStorage.removeItem("bot_token"); }
+var SESSION_TOKEN = loadToken();
 
 function applyTokenHeader(opts) {
   opts = opts || {};
@@ -275,7 +290,7 @@ function submitToken() {
   SESSION_TOKEN = token;
   fetch("/status").then(function(r) { return r.json(); }).then(function(d) {
     if (d.online) {
-      sessionStorage.setItem("bot_token", token);
+      saveToken(token);
       document.getElementById("tokenGate").classList.add("hidden");
       // kick off normal init now that we're authenticated
       pollStatus(); loadServers(); loadBots();
@@ -301,6 +316,12 @@ document.addEventListener("DOMContentLoaded", function() {
   // If a session token already exists, auto-verify it
   if (SESSION_TOKEN) submitToken();
 });
+
+function doLogout() {
+  SESSION_TOKEN = "";
+  clearToken();
+  location.reload();
+}
 
 var curServer=null,curChan=null,curChanId=null,replyMsg=null,notifCount=0,lastNotifId=null,evtSrc=null;
 var msgStore=new Map(),customBots={},activeBotId="main";
