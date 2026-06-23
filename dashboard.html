@@ -5,251 +5,149 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bot Dashboard</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#0b0d14;--sb:#10121a;--panel:#161820;--surf:#1c1f2e;--bord:#252840;
-  --acc:#5865f2;--acc2:#7983f5;--adim:rgba(88,101,242,.13);
-  --green:#3ba55c;--red:#ed4245;--yel:#faa61a;--pink:#eb459e;
-  --txt:#e3e5f0;--sub:#9ca3c0;--mut:#555878;
-  --r:8px;--r-lg:12px;
-}
+:root{--bg:#0d0f17;--sb:#13151f;--panel:#181b28;--surf:#1f2235;--bord:#2a2d3e;
+      --acc:#5865f2;--adim:rgba(88,101,242,.15);--green:#3ba55c;--red:#ed4245;
+      --yel:#faa61a;--txt:#e3e5f0;--mut:#7b7f9e}
 html,body{height:100%;background:var(--bg);color:var(--txt)}
-body{font-family:Inter,system-ui,sans-serif;display:flex;flex-direction:column;font-size:14px}
-
-/* ── scrollbars ── */
-::-webkit-scrollbar{width:5px;height:5px}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:var(--bord);border-radius:3px}
-::-webkit-scrollbar-thumb:hover{background:var(--mut)}
-
-/* ── header ── */
-#hdr{display:flex;align-items:center;gap:12px;padding:0 20px;height:52px;
-     background:var(--sb);border-bottom:1px solid var(--bord);flex-shrink:0;
-     box-shadow:0 1px 0 rgba(0,0,0,.3)}
-.logo{width:30px;height:30px;border-radius:50%;background:var(--acc);
-      display:flex;align-items:center;justify-content:center;flex-shrink:0;
-      box-shadow:0 0 0 3px var(--adim)}
-.logo i{font-size:15px;color:#fff}
-#hdr h1{font-size:14px;font-weight:700;letter-spacing:.01em}
-.hdr-right{display:flex;align-items:center;gap:10px;margin-left:auto}
-a.policy-link{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--sub);
-              padding:5px 11px;border:1px solid var(--bord);border-radius:var(--r);
-              text-decoration:none;transition:all .15s;background:var(--panel)}
-a.policy-link:hover{color:var(--txt);border-color:var(--acc);background:var(--adim)}
-.notif-wrap{position:relative;cursor:pointer;padding:6px;border-radius:var(--r);transition:background .15s}
+body{font-family:Inter,system-ui,sans-serif;display:flex;flex-direction:column}
+#hdr{display:flex;align-items:center;gap:11px;padding:10px 18px;background:var(--sb);border-bottom:1px solid var(--bord);flex-shrink:0}
+.logo{width:28px;height:28px;border-radius:50%;background:var(--acc);display:flex;align-items:center;justify-content:center}
+.logo i{font-size:14px;color:#fff}
+#hdr h1{font-size:14px;font-weight:600}
+.hdr-right{display:flex;align-items:center;gap:8px;margin-left:auto}
+a.policy-link{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--mut);padding:5px 10px;border:1px solid var(--bord);border-radius:6px;text-decoration:none;transition:all .12s}
+a.policy-link:hover{color:var(--txt);border-color:var(--acc)}
+.notif-wrap{position:relative;cursor:pointer;padding:5px;border-radius:6px;transition:background .12s}
 .notif-wrap:hover{background:var(--surf)}
-.notif-wrap i{font-size:18px;color:var(--sub)}
-#notifBadge{display:none;position:absolute;top:2px;right:2px;min-width:16px;height:16px;
-            padding:0 4px;background:var(--red);color:#fff;border-radius:8px;
-            font-size:10px;font-weight:700;line-height:16px;text-align:center}
-.status-pill{display:flex;align-items:center;gap:8px;font-size:12px;
-             font-family:"JetBrains Mono",monospace;color:var(--sub);
-             background:var(--panel);border:1px solid var(--bord);
-             border-radius:20px;padding:4px 12px 4px 8px}
-.dot{width:8px;height:8px;border-radius:50%;background:var(--mut);transition:background .3s;flex-shrink:0}
-.dot.online{background:var(--green);box-shadow:0 0 6px var(--green)}
-.dot.nuked{background:var(--red);box-shadow:0 0 6px var(--red)}
-
-/* ── layout ── */
+.notif-wrap i{font-size:18px;color:var(--mut)}
+#notifBadge{display:none;position:absolute;top:1px;right:1px;min-width:16px;height:16px;padding:0 4px;background:var(--red);color:#fff;border-radius:8px;font-size:10px;font-weight:700;line-height:16px;text-align:center}
+.status-pill{display:flex;align-items:center;gap:7px;font-size:12px;font-family:"JetBrains Mono",monospace;color:var(--mut)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--mut);transition:background .3s}
+.dot.online{background:var(--green)}
 #ws{display:flex;flex:1;overflow:hidden}
-aside{width:224px;min-width:180px;background:var(--sb);border-right:1px solid var(--bord);
-      display:flex;flex-direction:column;overflow:hidden}
-.aside-head{padding:14px 14px 6px;font-size:10px;font-weight:700;letter-spacing:.12em;
-            text-transform:uppercase;color:var(--mut);display:flex;align-items:center}
-.add-btn{margin-left:auto;width:22px;height:22px;border-radius:5px;background:none;
-         border:1px solid var(--bord);color:var(--mut);cursor:pointer;
-         display:flex;align-items:center;justify-content:center;font-size:14px;transition:all .15s}
+aside{width:220px;min-width:180px;background:var(--sb);border-right:1px solid var(--bord);display:flex;flex-direction:column;overflow:hidden}
+.aside-head{padding:12px 14px 6px;font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);display:flex;align-items:center}
+.add-btn{margin-left:auto;width:20px;height:20px;border-radius:4px;background:none;border:1px solid var(--bord);color:var(--mut);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .12s}
 .add-btn:hover{background:var(--acc);border-color:var(--acc);color:#fff}
 .scroll-list{overflow-y:auto;padding:0 8px}
-.srv,.bot-item{display:flex;align-items:center;gap:9px;padding:7px 9px;border-radius:var(--r);
-               cursor:pointer;font-size:13px;font-weight:500;color:var(--sub);
-               border:1px solid transparent;margin-bottom:2px;transition:all .15s}
+.scroll-list::-webkit-scrollbar{width:4px}
+.scroll-list::-webkit-scrollbar-thumb{background:var(--bord);border-radius:2px}
+.srv,.bot-item{display:flex;align-items:center;gap:9px;padding:7px 9px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:var(--mut);border:1px solid transparent;margin-bottom:2px;transition:background .12s,color .12s}
 .srv:hover,.bot-item:hover{background:var(--surf);color:var(--txt)}
 .srv.active{background:var(--surf);color:var(--txt);border-color:var(--bord)}
-.av{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;
-    justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0}
+.av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0}
 .item-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
-.del-btn{background:none;border:none;color:transparent;cursor:pointer;
-         padding:3px;border-radius:4px;display:flex;align-items:center;transition:all .15s}
+.del-btn{background:none;border:none;color:transparent;cursor:pointer;padding:2px;border-radius:3px;display:flex;align-items:center;transition:all .12s}
 .bot-item:hover .del-btn{color:var(--mut)}
-.del-btn:hover{color:var(--red) !important;background:rgba(237,66,69,.12)}
+.del-btn:hover{color:var(--red) !important;background:rgba(237,66,69,.1)}
 hr.aside-div{border:none;border-top:1px solid var(--bord);margin:6px 10px}
-
-/* ── add bot form ── */
-#addBotForm{padding:10px 10px 14px;background:var(--surf);margin:0 8px 6px;
-            border-radius:var(--r-lg);border:1px solid var(--bord);display:none;flex-direction:column;gap:8px}
-.form-input{width:100%;background:var(--panel);border:1px solid var(--bord);border-radius:var(--r);
-            padding:8px 10px;font-family:Inter,sans-serif;font-size:12.5px;color:var(--txt);
-            outline:none;transition:border-color .15s}
+#addBotForm{padding:8px 10px 12px;background:var(--surf);margin:0 8px 6px;border-radius:8px;border:1px solid var(--bord);display:none;flex-direction:column;gap:7px}
+.form-input{width:100%;background:var(--panel);border:1px solid var(--bord);border-radius:6px;padding:7px 10px;font-family:Inter,sans-serif;font-size:12.5px;color:var(--txt);outline:none;transition:border-color .12s}
 .form-input:focus{border-color:var(--acc)}
 .form-input::placeholder{color:var(--mut)}
 .form-row{display:flex;gap:6px}
-.form-btn{flex:1;padding:8px;background:var(--acc);border:none;border-radius:var(--r);
-          color:#fff;font-family:Inter,sans-serif;font-size:12.5px;font-weight:600;
-          cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:5px}
-.form-btn:hover{background:var(--acc2)}
-.form-btn.cancel{background:var(--bord);color:var(--sub)}
+.form-btn{flex:1;padding:7px;background:var(--acc);border:none;border-radius:6px;color:#fff;font-family:Inter,sans-serif;font-size:12.5px;font-weight:500;cursor:pointer;transition:background .12s;display:flex;align-items:center;justify-content:center;gap:5px}
+.form-btn:hover{background:#7983f5}
+.form-btn.cancel{background:var(--bord);color:var(--mut)}
 .form-btn.cancel:hover{background:var(--surf);color:var(--txt)}
-.form-btn:disabled{opacity:.45;cursor:not-allowed}
+.form-btn:disabled{opacity:.5;cursor:not-allowed}
 .form-hint{font-size:10.5px;color:var(--mut);text-align:center;line-height:1.5}
-
-/* ── main content ── */
 main{flex:1;display:flex;flex-direction:column;overflow:hidden}
-#chanBar{display:flex;align-items:center;gap:7px;padding:10px 18px;
-         background:var(--panel);border-bottom:1px solid var(--bord);
-         flex-shrink:0;min-height:50px;overflow-x:auto}
-.chan-lbl{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
-          color:var(--mut);flex-shrink:0;margin-right:4px}
-.chip{padding:4px 12px;border-radius:20px;border:1px solid var(--bord);font-size:12px;
-      font-family:"JetBrains Mono",monospace;color:var(--sub);cursor:pointer;
-      white-space:nowrap;flex-shrink:0;transition:all .15s}
+#chanBar{display:flex;align-items:center;gap:7px;padding:9px 16px;background:var(--panel);border-bottom:1px solid var(--bord);flex-shrink:0;min-height:48px;overflow-x:auto}
+#chanBar::-webkit-scrollbar{height:3px}
+#chanBar::-webkit-scrollbar-thumb{background:var(--bord)}
+.chan-lbl{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);flex-shrink:0;margin-right:4px}
+.chip{padding:4px 10px;border-radius:20px;border:1px solid var(--bord);font-size:12px;font-family:"JetBrains Mono",monospace;color:var(--mut);cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .12s}
 .chip:hover{border-color:rgba(88,101,242,.5);color:var(--txt)}
-.chip.active{background:var(--adim);border-color:var(--acc);color:var(--acc2)}
-#msgLog{flex:1;overflow-y:auto;padding:14px 18px;display:flex;flex-direction:column;gap:1px}
-.log-state{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
-           gap:12px;color:var(--mut);font-size:13px;text-align:center;line-height:1.7}
-.log-state i{font-size:40px;opacity:.6}
-
-/* ── messages ── */
-.msg-item{padding:6px 8px 6px 12px;border-radius:var(--r);cursor:pointer;
-          border-left:2px solid transparent;margin-left:-12px;position:relative;transition:background .1s}
+.chip.active{background:var(--adim);border-color:var(--acc);color:#7983f5}
+#msgLog{flex:1;overflow-y:auto;padding:12px 16px;display:flex;flex-direction:column;gap:1px;contain:layout style}
+#msgLog::-webkit-scrollbar{width:6px}
+#msgLog::-webkit-scrollbar-thumb{background:var(--bord);border-radius:3px}
+.log-state{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--mut);font-size:13px;text-align:center;line-height:1.7}
+.log-state i{font-size:36px}
+.msg-item{padding:5px 8px 5px 10px;border-radius:6px;cursor:pointer;border-left:2px solid transparent;margin-left:-10px;position:relative;transition:background .1s;contain:layout style}
 .msg-item:hover{background:var(--surf)}
 .msg-item:hover .msg-acts{opacity:1}
-.msg-item.notif{border-left-color:var(--yel);background:rgba(250,166,26,.06)}
-@keyframes fadeUp{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
-.msg-item{animation:fadeUp .18s ease}
-.ref-bar{display:flex;align-items:center;gap:5px;margin-bottom:3px;padding-left:46px;
-         font-size:12px;color:var(--mut);cursor:pointer;overflow:hidden}
+.msg-item.notif{border-left-color:var(--yel);background:rgba(250,166,26,.07)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.msg-item{animation:fadeUp .15s ease}
+.ref-bar{display:flex;align-items:center;gap:5px;margin-bottom:3px;padding-left:44px;font-size:12px;color:var(--mut);cursor:pointer;overflow:hidden}
 .ref-bar:hover{color:var(--txt)}
-.ref-author{font-weight:600;color:var(--acc);flex-shrink:0}
+.ref-author{font-weight:500;color:var(--acc);flex-shrink:0}
 .ref-content{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.notif-bar{display:flex;align-items:center;gap:5px;padding:1px 8px 4px 46px;
-           font-size:11px;color:var(--yel);font-weight:600}
-.msg-body{display:flex;gap:11px;align-items:flex-start}
-.msg-av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;
-        justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
+.notif-bar{display:flex;align-items:center;gap:5px;padding:1px 8px 3px 44px;font-size:11px;color:var(--yel);font-weight:500}
+.msg-body{display:flex;gap:10px;align-items:flex-start}
+.msg-av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
 .msg-right{flex:1;min-width:0}
-.msg-meta{display:flex;align-items:baseline;gap:7px;margin-bottom:3px;flex-wrap:wrap}
-.msg-author{font-size:13px;font-weight:700;color:var(--txt)}
+.msg-meta{display:flex;align-items:baseline;gap:7px;margin-bottom:2px;flex-wrap:wrap}
+.msg-author{font-size:13px;font-weight:600;color:var(--txt)}
 .msg-time{font-size:11px;color:var(--mut);font-family:"JetBrains Mono",monospace}
-.msg-text{font-size:14px;color:var(--txt);line-height:1.6;word-break:break-word;white-space:pre-wrap}
-.badge{font-size:10px;font-weight:700;padding:1px 6px;border-radius:4px;letter-spacing:.05em;text-transform:uppercase}
-.b-bot{background:rgba(88,101,242,.2);color:var(--acc2)}
-.b-reply{background:rgba(250,166,26,.18);color:var(--yel)}
+.msg-text{font-size:14px;color:var(--txt);line-height:1.55;word-break:break-word;white-space:pre-wrap}
+.badge{font-size:10px;font-weight:600;padding:1px 6px;border-radius:4px;letter-spacing:.04em;text-transform:uppercase}
+.b-bot{background:rgba(88,101,242,.2);color:#7983f5}
+.b-reply{background:rgba(250,166,26,.2);color:var(--yel)}
 .b-mention{background:rgba(237,66,69,.15);color:#ed8587}
-.msg-acts{position:absolute;top:5px;right:8px;opacity:0;transition:opacity .15s;display:flex;gap:4px}
-.act-btn{display:flex;align-items:center;gap:4px;padding:4px 10px;background:var(--panel);
-         border:1px solid var(--bord);border-radius:var(--r);color:var(--sub);
-         cursor:pointer;font-size:12px;font-family:Inter,sans-serif;font-weight:500;transition:all .12s}
+.msg-acts{position:absolute;top:4px;right:6px;opacity:0;transition:opacity .12s;display:flex;gap:4px}
+.act-btn{display:flex;align-items:center;gap:4px;padding:4px 9px;background:var(--panel);border:1px solid var(--bord);border-radius:6px;color:var(--mut);cursor:pointer;font-size:12px;font-family:Inter,sans-serif;transition:all .1s}
 .act-btn:hover{background:var(--acc);border-color:var(--acc);color:#fff}
-
-/* ── reply bar ── */
-#replyBar{display:none;align-items:center;gap:8px;padding:8px 18px;
-          background:var(--surf);border-top:1px solid var(--bord);font-size:12px;color:var(--sub);flex-shrink:0}
-#replyBar .ri{font-size:16px;color:var(--acc);flex-shrink:0}
-#replyAuthor{font-weight:600;color:var(--acc);flex-shrink:0}
+#replyBar{display:none;align-items:center;gap:8px;padding:7px 16px;background:var(--surf);border-top:1px solid var(--bord);font-size:12px;color:var(--mut);flex-shrink:0}
+#replyBar .ri{font-size:15px;color:var(--acc);flex-shrink:0}
+#replyAuthor{font-weight:500;color:var(--acc);flex-shrink:0}
 #replyPreview{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
-#cancelBtn{background:none;border:none;color:var(--mut);cursor:pointer;padding:4px;
-           border-radius:5px;display:flex;align-items:center;transition:all .12s}
+#cancelBtn{background:none;border:none;color:var(--mut);cursor:pointer;padding:4px;border-radius:4px;display:flex;align-items:center}
 #cancelBtn:hover{background:var(--bord);color:var(--txt)}
-
-/* ── composer ── */
-#composer{display:none;padding:12px 18px 14px;background:var(--panel);
-          border-top:1px solid var(--bord);flex-shrink:0}
-#botSelector{margin-bottom:9px}
-.bot-sel-label{font-size:11px;color:var(--mut);margin-bottom:6px;font-weight:600;letter-spacing:.05em;text-transform:uppercase}
+#composer{display:none;padding:10px 16px 12px;background:var(--panel);border-top:1px solid var(--bord);flex-shrink:0}
+#botSelector{margin-bottom:8px}
+.bot-sel-label{font-size:11px;color:var(--mut);margin-bottom:5px}
 #botOptions{display:flex;gap:5px;flex-wrap:wrap}
-.bot-pill{display:flex;align-items:center;gap:5px;padding:3px 10px 3px 6px;border-radius:20px;
-          border:1px solid var(--bord);cursor:pointer;font-size:12px;color:var(--sub);
-          font-weight:500;transition:all .15s}
+.bot-pill{display:flex;align-items:center;gap:5px;padding:3px 10px 3px 5px;border-radius:20px;border:1px solid var(--bord);cursor:pointer;font-size:12px;color:var(--mut);transition:all .12s}
 .bot-pill:hover{border-color:rgba(88,101,242,.5);color:var(--txt)}
-.bot-pill.active{border-color:var(--acc);background:var(--adim);color:var(--acc2)}
-.mini-av{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;
-         justify-content:center;font-size:9px;font-weight:700;color:#fff;flex-shrink:0}
-.comp-inner{display:flex;gap:9px;align-items:flex-end;background:var(--surf);
-            border:1px solid var(--bord);border-radius:var(--r-lg);padding:9px 13px;transition:border-color .15s}
-.comp-inner:focus-within{border-color:var(--acc)}
-textarea{flex:1;background:transparent;border:none;outline:none;resize:none;
-         font-family:Inter,system-ui,sans-serif;font-size:14px;color:var(--txt);
-         min-height:36px;max-height:120px;caret-color:var(--acc);line-height:1.5}
+.bot-pill.active{border-color:var(--acc);background:var(--adim);color:#7983f5}
+.mini-av{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;flex-shrink:0}
+.comp-inner{display:flex;gap:8px;align-items:flex-end;background:var(--surf);border:1px solid var(--bord);border-radius:8px;padding:8px 12px}
+textarea{flex:1;background:transparent;border:none;outline:none;resize:none;font-family:Inter,system-ui,sans-serif;font-size:14px;color:var(--txt);min-height:36px;max-height:120px;caret-color:var(--acc)}
 textarea::placeholder{color:var(--mut)}
-.send-btn{display:flex;align-items:center;gap:6px;padding:8px 16px;background:var(--acc);
-          color:#fff;border:none;border-radius:var(--r);font-family:Inter,sans-serif;
-          font-size:13px;font-weight:600;cursor:pointer;flex-shrink:0;transition:all .15s}
-.send-btn:hover{background:var(--acc2);transform:translateY(-1px)}
+.send-btn{display:flex;align-items:center;gap:6px;padding:7px 14px;background:var(--acc);color:#fff;border:none;border-radius:6px;font-family:Inter,sans-serif;font-size:13px;font-weight:500;cursor:pointer;flex-shrink:0;transition:background .12s,transform .1s}
+.send-btn:hover{background:#7983f5}
 .send-btn:active{transform:scale(.97)}
-.send-btn:disabled{background:var(--bord);color:var(--mut);cursor:not-allowed;transform:none}
-.comp-hint{font-size:11px;color:var(--mut);margin-top:6px}
-
-/* ── toast ── */
-#toast{position:fixed;bottom:24px;right:24px;padding:9px 18px;border-radius:var(--r-lg);
-       font-size:13px;font-weight:500;opacity:0;pointer-events:none;transition:opacity .25s;
-       z-index:999;display:flex;align-items:center;gap:9px;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.send-btn:disabled{background:var(--bord);cursor:not-allowed;transform:none}
+.comp-hint{font-size:11px;color:var(--mut);margin-top:5px}
+#toast{position:fixed;bottom:24px;right:24px;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:500;opacity:0;pointer-events:none;transition:opacity .25s;z-index:999;display:flex;align-items:center;gap:8px}
 #toast.show{opacity:1}
-#toast.ok{background:#122a1e;border:1px solid var(--green);color:#6be09a}
-#toast.warn{background:#342c10;border:1px solid var(--yel);color:var(--yel)}
-#toast.err{background:#2e1213;border:1px solid var(--red);color:#ed8587}
-#toast.info{background:#131a3a;border:1px solid var(--acc);color:var(--acc2)}
+#toast.ok{background:#1a3a28;border:1px solid var(--green);color:#6be09a}
+#toast.warn{background:#3d3218;border:1px solid var(--yel);color:var(--yel)}
+#toast.err{background:#3d1a1b;border:1px solid var(--red);color:#ed8587}
 @keyframes spin{to{transform:rotate(360deg)}}
 .spinning{animation:spin 1s linear infinite;display:inline-block}
-
-/* ── token gate ── */
-#tokenGate{position:fixed;inset:0;background:rgba(8,9,15,.97);display:flex;
-           align-items:center;justify-content:center;z-index:9999;backdrop-filter:blur(6px)}
+#tokenGate{position:fixed;inset:0;background:rgba(10,11,18,.97);display:flex;align-items:center;justify-content:center;z-index:9999;backdrop-filter:blur(4px)}
 #tokenGate.hidden{display:none}
-.gate-card{background:var(--panel);border:1px solid var(--bord);border-radius:16px;
-           padding:38px 34px;width:100%;max-width:420px;display:flex;flex-direction:column;
-           gap:22px;box-shadow:0 32px 80px rgba(0,0,0,.7)}
-.gate-logo{display:flex;align-items:center;justify-content:center;gap:13px}
-.gate-logo .logo{width:42px;height:42px}
-.gate-logo .logo i{font-size:22px}
-.gate-logo h2{font-size:20px;font-weight:700}
-.gate-desc{font-size:13px;color:var(--sub);text-align:center;line-height:1.7}
+.gate-card{background:var(--panel);border:1px solid var(--bord);border-radius:14px;padding:36px 32px;width:100%;max-width:420px;display:flex;flex-direction:column;gap:20px;box-shadow:0 24px 60px rgba(0,0,0,.6)}
+.gate-logo{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:4px}
+.gate-logo .logo{width:40px;height:40px}
+.gate-logo .logo i{font-size:20px}
+.gate-logo h2{font-size:18px;font-weight:600}
+.gate-desc{font-size:13px;color:var(--mut);text-align:center;line-height:1.65}
 .gate-field{display:flex;flex-direction:column;gap:6px}
-.gate-field label{font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--mut)}
+.gate-field label{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--mut)}
 .gate-input-wrap{position:relative;display:flex;align-items:center}
-.gate-input{width:100%;background:var(--surf);border:1px solid var(--bord);border-radius:var(--r-lg);
-            padding:11px 42px 11px 13px;font-family:"JetBrains Mono",monospace;font-size:13px;
-            color:var(--txt);outline:none;transition:border-color .15s}
+.gate-input{width:100%;background:var(--surf);border:1px solid var(--bord);border-radius:8px;padding:10px 40px 10px 12px;font-family:"JetBrains Mono",monospace;font-size:13px;color:var(--txt);outline:none;transition:border-color .15s}
 .gate-input:focus{border-color:var(--acc)}
 .gate-input::placeholder{color:var(--mut);font-family:Inter,sans-serif}
-.eye-btn{position:absolute;right:11px;background:none;border:none;color:var(--mut);
-         cursor:pointer;padding:4px;display:flex;align-items:center;border-radius:5px;transition:color .12s}
+.eye-btn{position:absolute;right:10px;background:none;border:none;color:var(--mut);cursor:pointer;padding:4px;display:flex;align-items:center;border-radius:4px;transition:color .12s}
 .eye-btn:hover{color:var(--txt)}
-.gate-btn{width:100%;padding:12px;background:var(--acc);border:none;border-radius:var(--r-lg);
-          color:#fff;font-family:Inter,sans-serif;font-size:14px;font-weight:700;cursor:pointer;
-          display:flex;align-items:center;justify-content:center;gap:9px;transition:all .15s}
-.gate-btn:hover{background:var(--acc2);transform:translateY(-1px)}
+.gate-btn{width:100%;padding:11px;background:var(--acc);border:none;border-radius:8px;color:#fff;font-family:Inter,sans-serif;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .15s,transform .1s}
+.gate-btn:hover{background:#7983f5}
 .gate-btn:active{transform:scale(.98)}
 .gate-btn:disabled{background:var(--bord);color:var(--mut);cursor:not-allowed;transform:none}
-.gate-error{font-size:12px;color:#ed8587;text-align:center;min-height:18px;
-            display:flex;align-items:center;justify-content:center;gap:6px}
-.gate-note{font-size:11px;color:var(--mut);text-align:center;display:flex;
-           align-items:center;justify-content:center;gap:5px}
-
-/* ── nuke overlay ── */
-#nukeOverlay{position:fixed;inset:0;background:rgba(8,9,15,.97);display:none;
-             align-items:center;justify-content:center;z-index:9998;backdrop-filter:blur(6px)}
-#nukeOverlay.show{display:flex}
-.nuke-card{background:var(--panel);border:1px solid var(--red);border-radius:16px;
-           padding:38px 34px;width:100%;max-width:420px;text-align:center;
-           display:flex;flex-direction:column;gap:18px;
-           box-shadow:0 0 60px rgba(237,66,69,.25),0 32px 80px rgba(0,0,0,.7)}
-.nuke-icon{font-size:52px;line-height:1}
-.nuke-card h2{font-size:20px;font-weight:700;color:var(--red)}
-.nuke-card p{font-size:13px;color:var(--sub);line-height:1.7}
-.nuke-btn{width:100%;padding:12px;background:var(--acc);border:none;border-radius:var(--r-lg);
-          color:#fff;font-family:Inter,sans-serif;font-size:14px;font-weight:700;cursor:pointer;
-          display:flex;align-items:center;justify-content:center;gap:9px;transition:all .15s}
-.nuke-btn:hover{background:var(--acc2)}
+.gate-error{font-size:12px;color:#ed8587;text-align:center;min-height:18px;display:flex;align-items:center;justify-content:center;gap:5px}
+.gate-note{font-size:11px;color:var(--mut);text-align:center;display:flex;align-items:center;justify-content:center;gap:5px}
 </style>
 </head>
 <body>
-
-<!-- Token Gate -->
 <div id="tokenGate">
   <div class="gate-card">
     <div class="gate-logo">
@@ -266,21 +164,10 @@ textarea::placeholder{color:var(--mut)}
     </div>
     <div class="gate-error" id="gateError"></div>
     <button class="gate-btn" id="gateBtn" onclick="submitToken()"><i class="ti ti-plug-connected"></i> Connect Bot</button>
-    <div class="gate-note"><i class="ti ti-lock" style="font-size:12px"></i> Token is never saved to disk or sent to any third party and sorry about how long it takes</div>
+    <div class="gate-note"><i class="ti ti-lock" style="font-size:12px"></i> Token is never saved to disk or sent to any third party</div>
   </div>
 </div>
 
-<!-- Nuke Overlay (shown when /shutdown=nukeyay fires) -->
-<div id="nukeOverlay">
-  <div class="nuke-card">
-    <div class="nuke-icon">💥</div>
-    <h2>Session Nuked</h2>
-    <p>All bot sessions have been cleared by the server administrator.<br>Please re-enter your token to reconnect.</p>
-    <button class="nuke-btn" onclick="reloginAfterNuke()"><i class="ti ti-refresh"></i> Re-Login</button>
-  </div>
-</div>
-
-<!-- Header -->
 <div id="hdr">
   <div class="logo"><i class="ti ti-bolt"></i></div>
   <h1>Bot Dashboard</h1>
@@ -295,8 +182,6 @@ textarea::placeholder{color:var(--mut)}
     </div>
   </div>
 </div>
-
-<!-- Workspace -->
 <div id="ws">
   <aside>
     <div class="aside-head">Servers</div>
@@ -314,15 +199,14 @@ textarea::placeholder{color:var(--mut)}
       </div>
       <div class="form-hint"><i class="ti ti-lock" style="font-size:11px"></i> Token kept in memory only — never saved</div>
     </div>
-    <div class="scroll-list" id="botList" style="padding-bottom:14px"></div>
+    <div class="scroll-list" id="botList" style="padding-bottom:12px"></div>
   </aside>
-
   <main>
     <div id="chanBar"><span style="font-size:12px;color:var(--mut);font-style:italic">Select a server to begin</span></div>
     <div id="msgLog"><div class="log-state"><i class="ti ti-messages"></i><div>Select a server and channel<br>to see live messages</div></div></div>
     <div id="replyBar">
       <i class="ti ti-corner-up-right ri"></i>
-      <span>Replying to</span>&nbsp;<span id="replyAuthor"></span>&nbsp;<span id="replyPreview"></span>
+      <span>Replying to</span><span id="replyAuthor"></span><span id="replyPreview"></span>
       <button id="cancelBtn" onclick="cancelReply()"><i class="ti ti-x" style="font-size:15px"></i></button>
     </div>
     <div id="composer">
@@ -338,337 +222,571 @@ textarea::placeholder{color:var(--mut)}
     </div>
   </main>
 </div>
-
 <div id="toast"></div>
 
 <script>
-/* ── helpers ──────────────────────────────────────── */
-var AV=['#5865f2','#3ba55c','#eb459e','#ed4245','#faa61a','#00b0f4','#9b59b6','#e67e22'];
-function ac(n){var h=0;for(var i=0;i<n.length;i++)h=((h<<5)-h+n.charCodeAt(i))|0;return AV[Math.abs(h)%AV.length]}
-function ini(n){return(n||"?").split(/\s+/).map(function(w){return w[0]||""}).join("").slice(0,2).toUpperCase()||"?"}
-function esc(t){return(t||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
-function fmt(iso){return new Date(iso).toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"})}
-var _tt=null;
-function showToast(msg,type,icon){
-  var t=document.getElementById("toast");
-  t.className="show "+(type||"ok");
-  t.innerHTML='<i class="ti '+(icon||"ti-check")+'" style="font-size:16px"></i> '+esc(msg);
-  if(_tt)clearTimeout(_tt);_tt=setTimeout(function(){t.className=""},3500);
-}
-
-/* ── session token ────────────────────────────────── */
-var SESSION_TOKEN=sessionStorage.getItem("bot_token")||"";
-
-function applyTokenHeader(opts){
-  opts=opts||{};if(!opts.headers)opts.headers={};
-  if(SESSION_TOKEN)opts.headers["X-Bot-Token"]=SESSION_TOKEN;
-  return opts;
-}
-var _origFetch=window.fetch;
-window.fetch=function(url,opts){
-  if(typeof url==="string"&&!url.startsWith("http"))opts=applyTokenHeader(opts||{});
-  return _origFetch.apply(this,[url,opts]);
+// ── Perf: cache all hot DOM refs once ────────────────────────────────────────
+const $ = id => document.getElementById(id);
+const DOM = {
+  gate: $('tokenGate'), gateToken: $('gateToken'), gateBtn: $('gateBtn'),
+  gateError: $('gateError'), eyeIcon: $('eyeIcon'),
+  statusDot: $('statusDot'), statusText: $('statusText'),
+  notifBadge: $('notifBadge'), srvList: $('srvList'), botList: $('botList'),
+  chanBar: $('chanBar'), msgLog: $('msgLog'),
+  replyBar: $('replyBar'), replyAuthor: $('replyAuthor'), replyPreview: $('replyPreview'),
+  composer: $('composer'), botSelector: $('botSelector'), botOptions: $('botOptions'),
+  msgInput: $('msgInput'), sendBtn: $('sendBtn'), toast: $('toast'),
+  addBotForm: $('addBotForm'), addBotToggle: $('addBotToggle'),
+  newBotToken: $('newBotToken'), newBotName: $('newBotName'),
+  connectBotBtn: $('connectBotBtn'),
 };
 
-/* ── gate ─────────────────────────────────────────── */
-function toggleEye(){
-  var i=document.getElementById("gateToken"),ic=document.getElementById("eyeIcon");
-  i.type=i.type==="password"?"text":"password";
-  ic.className=i.type==="password"?"ti ti-eye":"ti ti-eye-off";
+// ── State ─────────────────────────────────────────────────────────────────────
+let SESSION_TOKEN = sessionStorage.getItem('bot_token') || '';
+let curServer = null, curChan = null, curChanId = null;
+let replyMsg = null, notifCount = 0, lastNotifId = null;
+let evtSrc = null, sseReconnectTimer = null, sseRetryDelay = 1000;
+let customBots = {}, activeBotId = 'main';
+// Perf: store known guild/channel IDs to skip full re-renders
+let knownGuildIds = new Set(), knownChanIds = new Set();
+// Perf: cache avatar colors to avoid recomputing
+const avCache = new Map();
+const msgStore = new Map();
+// Toast timer ref
+let toastTimer = null;
+// Status polling: track last known state to avoid DOM writes when nothing changed
+let lastStatusOnline = null, lastStatusUser = '';
+
+// ── Fast fetch wrapper (avoids monkey-patching) ───────────────────────────────
+function apiFetch(url, opts) {
+  opts = opts || {};
+  if (!opts.headers) opts.headers = {};
+  if (SESSION_TOKEN) opts.headers['X-Bot-Token'] = SESSION_TOKEN;
+  return fetch(url, opts);
 }
-function setGateError(msg){
-  var e=document.getElementById("gateError");
-  e.innerHTML=msg?'<i class="ti ti-alert-circle"></i> '+msg:"";
+
+// ── Avatar helpers (cached) ───────────────────────────────────────────────────
+const AV = ['#5865f2','#3ba55c','#eb459e','#ed4245','#faa61a','#00b0f4','#9b59b6','#e67e22'];
+function ac(n) {
+  if (avCache.has(n)) return avCache.get(n);
+  let h = 0;
+  for (let i = 0; i < n.length; i++) h = ((h << 5) - h + n.charCodeAt(i)) | 0;
+  const c = AV[Math.abs(h) % AV.length];
+  avCache.set(n, c);
+  return c;
 }
-function submitToken(){
-  var token=document.getElementById("gateToken").value.trim();
-  if(!token){setGateError("Please paste a bot token.");return;}
-  var btn=document.getElementById("gateBtn");
-  btn.disabled=true;btn.innerHTML='<i class="ti ti-loader spinning"></i> Verifying…';setGateError("");
-  SESSION_TOKEN=token;
-  fetch("/status").then(function(r){return r.json();}).then(function(d){
-    if(d.nuked){SESSION_TOKEN="";showNukeOverlay();btn.disabled=false;btn.innerHTML='<i class="ti ti-plug-connected"></i> Connect Bot';return;}
-    if(d.online){
-      sessionStorage.setItem("bot_token",token);
-      document.getElementById("tokenGate").classList.add("hidden");
-      pollStatus();loadServers();loadBots();
+function ini(n) {
+  return n.split(/\s+/).map(w => w[0] || '').join('').slice(0, 2).toUpperCase() || '?';
+}
+function esc(t) {
+  return (t || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function fmt(iso) {
+  return new Date(iso).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+}
+
+// ── Token gate ────────────────────────────────────────────────────────────────
+function toggleEye() {
+  const inp = DOM.gateToken;
+  if (inp.type === 'password') { inp.type = 'text'; DOM.eyeIcon.className = 'ti ti-eye-off'; }
+  else { inp.type = 'password'; DOM.eyeIcon.className = 'ti ti-eye'; }
+}
+function setGateError(msg) {
+  DOM.gateError.innerHTML = msg ? `<i class="ti ti-alert-circle"></i> ${msg}` : '';
+}
+function submitToken() {
+  const token = DOM.gateToken.value.trim();
+  if (!token) { setGateError('Please paste a bot token.'); return; }
+  DOM.gateBtn.disabled = true;
+  DOM.gateBtn.innerHTML = '<i class="ti ti-loader spinning"></i> Verifying…';
+  setGateError('');
+  SESSION_TOKEN = token;
+  apiFetch('/status').then(r => r.json()).then(d => {
+    if (d.online) {
+      sessionStorage.setItem('bot_token', token);
+      DOM.gate.classList.add('hidden');
+      startApp();
     } else {
-      SESSION_TOKEN="";setGateError("Bot is offline or token is invalid.");
-      btn.disabled=false;btn.innerHTML='<i class="ti ti-plug-connected"></i> Connect Bot';
+      SESSION_TOKEN = '';
+      setGateError('Bot is offline or token is invalid.');
+      DOM.gateBtn.disabled = false;
+      DOM.gateBtn.innerHTML = '<i class="ti ti-plug-connected"></i> Connect Bot';
     }
-  }).catch(function(){
-    SESSION_TOKEN="";setGateError("Could not reach the server.");
-    btn.disabled=false;btn.innerHTML='<i class="ti ti-plug-connected"></i> Connect Bot';
+  }).catch(() => {
+    SESSION_TOKEN = '';
+    setGateError('Could not reach the server.');
+    DOM.gateBtn.disabled = false;
+    DOM.gateBtn.innerHTML = '<i class="ti ti-plug-connected"></i> Connect Bot';
   });
 }
-document.addEventListener("DOMContentLoaded",function(){
-  document.getElementById("gateToken").addEventListener("keydown",function(e){if(e.key==="Enter")submitToken();});
-  if(SESSION_TOKEN)submitToken();
-});
+DOM.gateToken.addEventListener('keydown', e => { if (e.key === 'Enter') submitToken(); });
 
-/* ── nuke ─────────────────────────────────────────── */
-function showNukeOverlay(){
-  SESSION_TOKEN="";sessionStorage.removeItem("bot_token");
-  if(evtSrc){evtSrc.close();evtSrc=null;}
-  document.getElementById("nukeOverlay").classList.add("show");
-}
-function reloginAfterNuke(){
-  document.getElementById("nukeOverlay").classList.remove("show");
-  document.getElementById("tokenGate").classList.remove("hidden");
-  document.getElementById("gateToken").value="";
-  document.getElementById("gateToken").focus();
-  // Reset UI state
-  curServer=null;curChan=null;curChanId=null;replyMsg=null;notifCount=0;lastNotifId=null;
-  msgStore.clear();customBots={};activeBotId="main";
-  document.getElementById("srvList").innerHTML="";
-  document.getElementById("botList").innerHTML="";
-  document.getElementById("msgLog").innerHTML='<div class="log-state"><i class="ti ti-messages"></i><div>Select a server and channel<br>to see live messages</div></div>';
-  document.getElementById("chanBar").innerHTML='<span style="font-size:12px;color:var(--mut);font-style:italic">Select a server to begin</span>';
-  document.getElementById("composer").style.display="none";
-  document.getElementById("statusDot").className="dot";
-  document.getElementById("statusText").textContent="connecting...";
+// ── App startup ───────────────────────────────────────────────────────────────
+function startApp() {
+  pollStatus();
+  loadServers();
+  loadBots();
+  // Perf: poll status every 8s (was 5s) — status rarely changes mid-session
+  setInterval(pollStatus, 8000);
+  // Perf: reload servers every 30s (was 20s) with diff-based render
+  setInterval(loadServers, 30000);
 }
 
-/* ── state ────────────────────────────────────────── */
-var curServer=null,curChan=null,curChanId=null,replyMsg=null,notifCount=0,lastNotifId=null,evtSrc=null;
-var msgStore=new Map(),customBots={},activeBotId="main";
-
-/* ── status poll ──────────────────────────────────── */
-function pollStatus(){
-  fetch("/status").then(function(r){return r.json();}).then(function(d){
-    if(d.nuked){showNukeOverlay();return;}
-    var dot=document.getElementById("statusDot"),txt=document.getElementById("statusText");
-    dot.className="dot"+(d.online?" online":"");
-    txt.textContent=d.online?d.username:"offline";
-    if(d.online)refreshBotPills();
-  }).catch(function(){
-    document.getElementById("statusDot").className="dot";
-    document.getElementById("statusText").textContent="offline";
+// ── Status polling (diff-aware — skips DOM writes when unchanged) ─────────────
+function pollStatus() {
+  apiFetch('/status').then(r => r.json()).then(d => {
+    if (d.online === lastStatusOnline && d.username === lastStatusUser) return; // no change
+    lastStatusOnline = d.online;
+    lastStatusUser = d.username || '';
+    DOM.statusDot.className = 'dot' + (d.online ? ' online' : '');
+    DOM.statusText.textContent = d.online ? d.username : 'offline';
+    if (d.online) refreshBotPills();
+  }).catch(() => {
+    if (lastStatusOnline !== false) {
+      lastStatusOnline = false;
+      DOM.statusDot.className = 'dot';
+      DOM.statusText.textContent = 'offline';
+    }
   });
 }
-if(SESSION_TOKEN){pollStatus();setInterval(pollStatus,5000);}
-else{setInterval(function(){if(SESSION_TOKEN){pollStatus();}},5000);}
 
-/* ── servers ──────────────────────────────────────── */
-function loadServers(){
-  fetch("/guilds").then(function(r){return r.json();}).then(function(gs){
-    var list=document.getElementById("srvList"),aid=curServer?curServer.id:null;
-    list.innerHTML="";
-    if(!gs.length){list.innerHTML='<div style="padding:10px 12px;font-size:12px;color:var(--mut)">No servers found</div>';return;}
-    gs.forEach(function(g){
-      var el=document.createElement("div");el.className="srv"+(g.id===aid?" active":"");el.id="srv-"+g.id;
-      el.innerHTML='<div class="av" style="background:'+ac(g.name)+'">'+ini(g.name)+'</div><span class="item-name">'+esc(g.name)+"</span>";
-      el.onclick=function(){pickServer(g,el);};list.appendChild(el);
+// ── Server list (diff-based — only re-renders on changes) ─────────────────────
+function loadServers() {
+  apiFetch('/guilds').then(r => r.json()).then(gs => {
+    const incoming = new Set(gs.map(g => g.id));
+    // Fast path: same set of guilds → skip re-render
+    if (incoming.size === knownGuildIds.size && gs.every(g => knownGuildIds.has(g.id))) return;
+    knownGuildIds = incoming;
+
+    const frag = document.createDocumentFragment();
+    if (!gs.length) {
+      const msg = document.createElement('div');
+      msg.style.cssText = 'padding:10px 12px;font-size:12px;color:var(--mut)';
+      msg.textContent = 'No servers found';
+      frag.appendChild(msg);
+    } else {
+      gs.forEach(g => {
+        const el = document.createElement('div');
+        el.className = 'srv' + (curServer && g.id === curServer.id ? ' active' : '');
+        el.id = 'srv-' + g.id;
+        const av = document.createElement('div');
+        av.className = 'av';
+        av.style.background = ac(g.name);
+        av.textContent = ini(g.name);
+        const nm = document.createElement('span');
+        nm.className = 'item-name';
+        nm.textContent = g.name;
+        el.appendChild(av);
+        el.appendChild(nm);
+        el.onclick = () => pickServer(g, el);
+        frag.appendChild(el);
+      });
+    }
+    DOM.srvList.textContent = ''; // fast clear
+    DOM.srvList.appendChild(frag);
+  }).catch(() => {});
+}
+
+// ── Server / channel selection ────────────────────────────────────────────────
+function pickServer(g, el) {
+  document.querySelectorAll('.srv').forEach(e => e.classList.remove('active'));
+  el.classList.add('active');
+  curServer = g; curChan = null; curChanId = null;
+  knownChanIds.clear();
+  cancelReply();
+  DOM.composer.style.display = 'none';
+  DOM.sendBtn.disabled = true;
+  if (evtSrc) { evtSrc.close(); evtSrc = null; }
+  clearTimeout(sseReconnectTimer);
+
+  // Build channel bar
+  DOM.chanBar.innerHTML = '';
+  const lbl = document.createElement('span');
+  lbl.className = 'chan-lbl';
+  lbl.textContent = 'Channel';
+  DOM.chanBar.appendChild(lbl);
+
+  apiFetch('/channels/' + g.id).then(r => r.json()).then(cs => {
+    if (!cs.length) {
+      DOM.chanBar.innerHTML = '<span style="font-size:12px;color:var(--mut);font-style:italic">No text channels</span>';
+      return;
+    }
+    const frag = document.createDocumentFragment();
+    cs.forEach(c => {
+      const chip = document.createElement('div');
+      chip.className = 'chip';
+      chip.textContent = '#' + c.name;
+      chip.onclick = () => pickChannel(c, chip);
+      frag.appendChild(chip);
     });
-  }).catch(function(){});
-}
-if(SESSION_TOKEN){loadServers();setInterval(loadServers,20000);}
-else{setInterval(function(){if(SESSION_TOKEN){loadServers();}},20000);}
-
-function pickServer(g,el){
-  document.querySelectorAll(".srv").forEach(function(e){e.classList.remove("active");});
-  el.classList.add("active");curServer=g;curChan=null;curChanId=null;
-  cancelReply();document.getElementById("composer").style.display="none";document.getElementById("sendBtn").disabled=true;
-  if(evtSrc){evtSrc.close();evtSrc=null;}
-  var bar=document.getElementById("chanBar");bar.innerHTML='<span class="chan-lbl">Channel</span>';
-  fetch("/channels/"+g.id).then(function(r){return r.json();}).then(function(cs){
-    if(!cs.length){bar.innerHTML='<span style="font-size:12px;color:var(--mut);font-style:italic">No text channels</span>';return;}
-    cs.forEach(function(c){
-      var chip=document.createElement("div");chip.className="chip";chip.textContent="#"+c.name;
-      chip.onclick=function(){pickChannel(c,chip);};bar.appendChild(chip);
-    });
+    DOM.chanBar.appendChild(frag);
   });
-  document.getElementById("msgLog").innerHTML='<div class="log-state"><i class="ti ti-hash"></i><div>Pick a channel</div></div>';
+
+  DOM.msgLog.innerHTML = '<div class="log-state"><i class="ti ti-hash"></i><div>Pick a channel</div></div>';
 }
 
-function pickChannel(c,chip){
-  document.querySelectorAll(".chip").forEach(function(ch){ch.classList.remove("active");});
-  chip.classList.add("active");curChan=c.name;curChanId=c.id;cancelReply();
-  document.getElementById("composer").style.display="block";
-  document.getElementById("sendBtn").disabled=false;
-  document.getElementById("msgInput").placeholder="Message #"+c.name+"...";
-  document.getElementById("msgInput").focus();
-  refreshBotPills();loadHistory(c.id);connectSSE(c.id);
+function pickChannel(c, chip) {
+  document.querySelectorAll('.chip').forEach(ch => ch.classList.remove('active'));
+  chip.classList.add('active');
+  curChan = c.name; curChanId = c.id;
+  cancelReply();
+  DOM.composer.style.display = 'block';
+  DOM.sendBtn.disabled = false;
+  DOM.msgInput.placeholder = 'Message #' + c.name + '...';
+  DOM.msgInput.focus();
+  refreshBotPills();
+  loadHistory(c.id);
+  connectSSE(c.id);
 }
 
-/* ── history + SSE ────────────────────────────────── */
-function loadHistory(cid){
-  var log=document.getElementById("msgLog");
-  log.innerHTML='<div class="log-state"><i class="ti ti-loader spinning"></i><div>Loading...</div></div>';
+// ── Message history ───────────────────────────────────────────────────────────
+function loadHistory(cid) {
+  DOM.msgLog.innerHTML = '<div class="log-state"><i class="ti ti-loader spinning"></i><div>Loading...</div></div>';
   msgStore.clear();
-  fetch("/history/"+cid).then(function(r){return r.json();}).then(function(msgs){
-    log.innerHTML="";
-    if(msgs.error){log.innerHTML='<div class="log-state"><i class="ti ti-lock"></i><div>'+esc(msgs.error)+"</div></div>";return;}
-    if(!msgs.length){log.innerHTML='<div class="log-state"><i class="ti ti-message-off"></i><div>No messages yet</div></div>';return;}
-    msgs.forEach(function(m){log.appendChild(buildMsg(m));});log.scrollTop=log.scrollHeight;
-  }).catch(function(){log.innerHTML='<div class="log-state"><i class="ti ti-wifi-off"></i><div>Failed to load</div></div>';});
+  apiFetch('/history/' + cid).then(r => r.json()).then(msgs => {
+    if (msgs.error) {
+      DOM.msgLog.innerHTML = `<div class="log-state"><i class="ti ti-lock"></i><div>${esc(msgs.error)}</div></div>`;
+      return;
+    }
+    if (!msgs.length) {
+      DOM.msgLog.innerHTML = '<div class="log-state"><i class="ti ti-message-off"></i><div>No messages yet</div></div>';
+      return;
+    }
+    // Perf: build all message nodes in a fragment before touching the live DOM
+    const frag = document.createDocumentFragment();
+    msgs.forEach(m => frag.appendChild(buildMsg(m)));
+    DOM.msgLog.textContent = '';
+    DOM.msgLog.appendChild(frag);
+    DOM.msgLog.scrollTop = DOM.msgLog.scrollHeight;
+  }).catch(() => {
+    DOM.msgLog.innerHTML = '<div class="log-state"><i class="ti ti-wifi-off"></i><div>Failed to load</div></div>';
+  });
 }
 
-function connectSSE(cid){
-  if(evtSrc){evtSrc.close();evtSrc=null;}
-  evtSrc=new EventSource("/events/"+cid);
-  evtSrc.onmessage=function(e){
-    try{
-      var msg=JSON.parse(e.data);
-      if(msg.type==="ping")return;
-      if(msg.type==="shutdown"){showNukeOverlay();return;}
-      var log=document.getElementById("msgLog"),ph=log.querySelector(".log-state");if(ph)ph.remove();
-      log.appendChild(buildMsg(msg));log.scrollTop=log.scrollHeight;
-      if(msg.notify){
-        notifCount++;lastNotifId=msg.id;
-        document.getElementById("notifBadge").textContent=notifCount;
-        document.getElementById("notifBadge").style.display="block";
-        showToast((msg.is_reply_to_bot?msg.author+" replied to the bot!":msg.author+" mentioned the bot!"),"warn","ti-bell-ringing");
+// ── SSE with auto-reconnect ───────────────────────────────────────────────────
+function connectSSE(cid) {
+  if (evtSrc) { evtSrc.close(); evtSrc = null; }
+  clearTimeout(sseReconnectTimer);
+  sseRetryDelay = 1000;
+  _openSSE(cid);
+}
+function _openSSE(cid) {
+  // Perf: attach token via URL param for SSE (can't set headers on EventSource)
+  const url = '/events/' + cid + (SESSION_TOKEN ? '?token=' + encodeURIComponent(SESSION_TOKEN) : '');
+  evtSrc = new EventSource(url);
+  evtSrc.onmessage = e => {
+    try {
+      const msg = JSON.parse(e.data);
+      if (msg.type === 'ping') return;
+      // Perf: remove placeholder only once
+      const ph = DOM.msgLog.querySelector('.log-state');
+      if (ph) ph.remove();
+      const el = buildMsg(msg);
+      DOM.msgLog.appendChild(el);
+      // Perf: only scroll if already near bottom (within 150px)
+      const log = DOM.msgLog;
+      if (log.scrollHeight - log.scrollTop - log.clientHeight < 150) {
+        log.scrollTop = log.scrollHeight;
       }
-    }catch(err){}
+      if (msg.notify) {
+        notifCount++;
+        lastNotifId = msg.id;
+        DOM.notifBadge.textContent = notifCount;
+        DOM.notifBadge.style.display = 'block';
+        showToast((msg.is_reply_to_bot ? msg.author + ' replied to the bot!' : msg.author + ' mentioned the bot!'), 'warn', 'ti-bell-ringing');
+      }
+    } catch (err) {}
   };
-  evtSrc.onerror=function(){/* reconnects automatically */};
+  evtSrc.onerror = () => {
+    if (!curChanId) return;
+    evtSrc.close(); evtSrc = null;
+    // Exponential backoff reconnect (max 30s)
+    sseReconnectTimer = setTimeout(() => {
+      _openSSE(cid);
+      sseRetryDelay = Math.min(sseRetryDelay * 2, 30000);
+    }, sseRetryDelay);
+  };
+  evtSrc.onopen = () => { sseRetryDelay = 1000; }; // reset on success
 }
 
-/* ── message builder ──────────────────────────────── */
-function buildMsg(msg){
-  msgStore.set(msg.id,msg);
-  var el=document.createElement("div");el.className="msg-item"+(msg.notify?" notif":"");el.id="msg-"+msg.id;
-  var h="";
-  if(msg.reference){
-    h+='<div class="ref-bar" data-rid="'+msg.reference.id+'"><i class="ti ti-corner-up-left"></i>'
-      +'<span class="ref-author">'+esc(msg.reference.author)+'</span> '
-      +'<span class="ref-content">'+esc((msg.reference.content||"(empty)").slice(0,80))+"</span></div>";
+// ── Message builder (DOM API — faster than innerHTML for repeated calls) ──────
+function buildMsg(msg) {
+  msgStore.set(msg.id, msg);
+  const el = document.createElement('div');
+  el.className = 'msg-item' + (msg.notify ? ' notif' : '');
+  el.id = 'msg-' + msg.id;
+
+  if (msg.reference) {
+    const ref = document.createElement('div');
+    ref.className = 'ref-bar';
+    ref.dataset.rid = msg.reference.id;
+    ref.innerHTML = `<i class="ti ti-corner-up-left"></i><span class="ref-author">${esc(msg.reference.author)}</span><span class="ref-content">${esc((msg.reference.content || '(empty)').slice(0, 80))}</span>`;
+    ref.addEventListener('click', e => { e.stopPropagation(); scrollToMsg(msg.reference.id); });
+    el.appendChild(ref);
   }
-  if(msg.is_reply_to_bot)h+='<div class="notif-bar"><i class="ti ti-bell-ringing"></i> Replied to the bot</div>';
-  else if(msg.mentions_bot)h+='<div class="notif-bar"><i class="ti ti-at"></i> Mentioned the bot</div>';
-  var badges="";
-  if(msg.is_bot)badges+='<span class="badge b-bot">BOT</span>';
-  if(msg.is_reply_to_bot)badges+='<span class="badge b-reply">reply to bot</span>';
-  else if(msg.mentions_bot)badges+='<span class="badge b-mention">mentioned bot</span>';
-  h+='<div class="msg-body"><div class="msg-av" style="background:'+ac(msg.author)+'">'+ini(msg.author)+"</div>"
-    +'<div class="msg-right"><div class="msg-meta"><span class="msg-author">'+esc(msg.author)+'</span>'
-    +'<span class="msg-time">'+fmt(msg.timestamp)+"</span>"+badges+"</div>"
-    +'<div class="msg-text">'+(esc(msg.content)||'<span style="opacity:.35">(no content)</span>')+"</div></div></div>"
-    +'<div class="msg-acts"><button class="act-btn"><i class="ti ti-corner-up-right"></i> Reply</button></div>';
-  el.innerHTML=h;
-  var rb=el.querySelector(".ref-bar");
-  if(rb)rb.addEventListener("click",function(e){e.stopPropagation();scrollToMsg(msg.reference.id);});
-  var ab=el.querySelector(".act-btn");
-  if(ab)ab.addEventListener("click",function(e){e.stopPropagation();setReply(msg.id);});
-  el.addEventListener("click",function(){setReply(msg.id);});
+
+  if (msg.is_reply_to_bot) {
+    const nb = document.createElement('div');
+    nb.className = 'notif-bar';
+    nb.innerHTML = '<i class="ti ti-bell-ringing"></i> Replied to the bot';
+    el.appendChild(nb);
+  } else if (msg.mentions_bot) {
+    const nb = document.createElement('div');
+    nb.className = 'notif-bar';
+    nb.innerHTML = '<i class="ti ti-at"></i> Mentioned the bot';
+    el.appendChild(nb);
+  }
+
+  // Build body
+  const body = document.createElement('div');
+  body.className = 'msg-body';
+
+  const av = document.createElement('div');
+  av.className = 'msg-av';
+  av.style.background = ac(msg.author);
+  av.textContent = ini(msg.author);
+
+  const right = document.createElement('div');
+  right.className = 'msg-right';
+
+  const meta = document.createElement('div');
+  meta.className = 'msg-meta';
+
+  const author = document.createElement('span');
+  author.className = 'msg-author';
+  author.textContent = msg.author;
+
+  const time = document.createElement('span');
+  time.className = 'msg-time';
+  time.textContent = fmt(msg.timestamp);
+
+  meta.appendChild(author);
+  meta.appendChild(time);
+
+  if (msg.is_bot) {
+    const b = document.createElement('span');
+    b.className = 'badge b-bot';
+    b.textContent = 'BOT';
+    meta.appendChild(b);
+  }
+  if (msg.is_reply_to_bot) {
+    const b = document.createElement('span');
+    b.className = 'badge b-reply';
+    b.textContent = 'reply to bot';
+    meta.appendChild(b);
+  } else if (msg.mentions_bot) {
+    const b = document.createElement('span');
+    b.className = 'badge b-mention';
+    b.textContent = 'mentioned bot';
+    meta.appendChild(b);
+  }
+
+  const text = document.createElement('div');
+  text.className = 'msg-text';
+  if (msg.content) {
+    text.textContent = msg.content; // textContent is XSS-safe and faster than innerHTML
+  } else {
+    const em = document.createElement('span');
+    em.style.opacity = '.4';
+    em.textContent = '(no content)';
+    text.appendChild(em);
+  }
+
+  right.appendChild(meta);
+  right.appendChild(text);
+  body.appendChild(av);
+  body.appendChild(right);
+  el.appendChild(body);
+
+  const acts = document.createElement('div');
+  acts.className = 'msg-acts';
+  const actBtn = document.createElement('button');
+  actBtn.className = 'act-btn';
+  actBtn.innerHTML = '<i class="ti ti-corner-up-right"></i> Reply';
+  actBtn.addEventListener('click', e => { e.stopPropagation(); setReply(msg.id); });
+  acts.appendChild(actBtn);
+  el.appendChild(acts);
+
+  el.addEventListener('click', () => setReply(msg.id));
   return el;
 }
 
-/* ── reply ────────────────────────────────────────── */
-function setReply(msgId){
-  var msg=msgStore.get(msgId);if(!msg)return;replyMsg=msg;
-  document.getElementById("replyAuthor").textContent="@"+msg.author;
-  document.getElementById("replyPreview").textContent=(msg.content||"(empty)").slice(0,80);
-  document.getElementById("replyBar").style.display="flex";
-  document.getElementById("msgInput").placeholder="Reply to "+msg.author+"...";
-  document.getElementById("msgInput").focus();
-  var t=document.getElementById("msg-"+msgId);
-  if(t){t.style.background="rgba(88,101,242,.2)";setTimeout(function(){t.style.background=""},900);}
+// ── Reply ─────────────────────────────────────────────────────────────────────
+function setReply(msgId) {
+  const msg = msgStore.get(msgId);
+  if (!msg) return;
+  replyMsg = msg;
+  DOM.replyAuthor.textContent = '@' + msg.author;
+  DOM.replyPreview.textContent = (msg.content || '(empty)').slice(0, 80);
+  DOM.replyBar.style.display = 'flex';
+  DOM.msgInput.placeholder = 'Reply to ' + msg.author + '...';
+  DOM.msgInput.focus();
+  const t = document.getElementById('msg-' + msgId);
+  if (t) { t.style.background = 'rgba(88,101,242,.18)'; setTimeout(() => { t.style.background = ''; }, 800); }
 }
-function cancelReply(){
-  replyMsg=null;document.getElementById("replyBar").style.display="none";
-  if(curChan)document.getElementById("msgInput").placeholder="Message #"+curChan+"...";
-}
-
-/* ── send ─────────────────────────────────────────── */
-function doSend(){
-  var input=document.getElementById("msgInput"),text=input.value.trim();
-  if(!text||!curChanId)return;
-  var btn=document.getElementById("sendBtn");btn.disabled=true;
-  var ep=replyMsg?"/reply":"/send";
-  var body=replyMsg
-    ?{channel_id:curChanId,message_id:replyMsg.id,content:text,bot_id:activeBotId}
-    :{channel_id:curChanId,message:text,bot_id:activeBotId};
-  fetch(ep,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)})
-    .then(function(r){return r.json();})
-    .then(function(d){
-      if(d.success){input.value="";input.style.height="";cancelReply();showToast("Sent!","ok","ti-check");}
-      else showToast(d.error||"Failed","err","ti-alert-circle");
-    }).catch(function(){showToast("Network error","err","ti-wifi-off");})
-    .finally(function(){btn.disabled=false;});
+function cancelReply() {
+  replyMsg = null;
+  DOM.replyBar.style.display = 'none';
+  if (curChan) DOM.msgInput.placeholder = 'Message #' + curChan + '...';
 }
 
-/* ── custom bots ──────────────────────────────────── */
-function toggleAddBot(){
-  var f=document.getElementById("addBotForm"),btn=document.getElementById("addBotToggle");
-  var show=f.style.display!=="flex";f.style.display=show?"flex":"none";
-  btn.innerHTML=show?'<i class="ti ti-x"></i>':'<i class="ti ti-plus"></i>';
-  if(show)document.getElementById("newBotToken").focus();
+// ── Send ──────────────────────────────────────────────────────────────────────
+function doSend() {
+  const text = DOM.msgInput.value.trim();
+  if (!text || !curChanId) return;
+  DOM.sendBtn.disabled = true;
+  const ep = replyMsg ? '/reply' : '/send';
+  const body = replyMsg
+    ? {channel_id: curChanId, message_id: replyMsg.id, content: text, bot_id: activeBotId}
+    : {channel_id: curChanId, message: text, bot_id: activeBotId};
+  apiFetch(ep, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)})
+    .then(r => r.json())
+    .then(d => {
+      if (d.success) { DOM.msgInput.value = ''; DOM.msgInput.style.height = ''; cancelReply(); showToast('Sent!','ok','ti-check'); }
+      else showToast(d.error || 'Failed', 'err', 'ti-alert-circle');
+    })
+    .catch(() => showToast('Network error', 'err', 'ti-wifi-off'))
+    .finally(() => { DOM.sendBtn.disabled = false; });
 }
-function addBot(){
-  var token=document.getElementById("newBotToken").value.trim();
-  var name=document.getElementById("newBotName").value.trim()||"Custom Bot";
-  if(!token){showToast("Enter a bot token","err","ti-alert-circle");return;}
-  var btn=document.getElementById("connectBotBtn");btn.disabled=true;
-  btn.innerHTML='<i class="ti ti-loader spinning"></i> Verifying...';
-  fetch("/bots",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({token:token,name:name})})
-    .then(function(r){return r.json();})
-    .then(function(d){
-      if(d.success){
-        document.getElementById("newBotToken").value="";document.getElementById("newBotName").value="";
-        toggleAddBot();loadBots();showToast("Connected: "+d.username,"ok","ti-robot");
-      } else showToast(d.error||"Invalid token","err","ti-alert-circle");
-    }).catch(function(){showToast("Network error","err","ti-wifi-off");})
-    .finally(function(){btn.disabled=false;btn.innerHTML='<i class="ti ti-plug-connected"></i> Connect';});
+
+// ── Custom bots ───────────────────────────────────────────────────────────────
+function toggleAddBot() {
+  const f = DOM.addBotForm, show = f.style.display !== 'flex';
+  f.style.display = show ? 'flex' : 'none';
+  DOM.addBotToggle.innerHTML = show ? '<i class="ti ti-x"></i>' : '<i class="ti ti-plus"></i>';
+  if (show) DOM.newBotToken.focus();
 }
-function deleteBot(id){
-  fetch("/bots/"+id,{method:"DELETE"}).then(function(){
-    if(activeBotId===id){activeBotId="main";refreshBotPills();}
-    loadBots();showToast("Bot removed","ok","ti-check");
+function addBot() {
+  const token = DOM.newBotToken.value.trim();
+  const name = DOM.newBotName.value.trim() || 'Custom Bot';
+  if (!token) { showToast('Enter a bot token', 'err', 'ti-alert-circle'); return; }
+  DOM.connectBotBtn.disabled = true;
+  DOM.connectBotBtn.innerHTML = '<i class="ti ti-loader spinning"></i> Verifying...';
+  apiFetch('/bots', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({token, name})})
+    .then(r => r.json())
+    .then(d => {
+      if (d.success) {
+        DOM.newBotToken.value = ''; DOM.newBotName.value = '';
+        toggleAddBot(); loadBots(); showToast('Connected: ' + d.username, 'ok', 'ti-robot');
+      } else showToast(d.error || 'Invalid token', 'err', 'ti-alert-circle');
+    })
+    .catch(() => showToast('Network error', 'err', 'ti-wifi-off'))
+    .finally(() => { DOM.connectBotBtn.disabled = false; DOM.connectBotBtn.innerHTML = '<i class="ti ti-plug-connected"></i> Connect'; });
+}
+function deleteBot(id) {
+  apiFetch('/bots/' + id, {method:'DELETE'}).then(() => {
+    if (activeBotId === id) { activeBotId = 'main'; refreshBotPills(); }
+    loadBots(); showToast('Bot removed', 'ok', 'ti-check');
   });
 }
-function loadBots(){
-  fetch("/bots").then(function(r){return r.json();}).then(function(bots){
-    customBots={};var list=document.getElementById("botList");list.innerHTML="";
-    bots.forEach(function(b){
-      customBots[b.id]=b;
-      var el=document.createElement("div");el.className="bot-item";
-      el.innerHTML='<div class="av" style="background:'+ac(b.name)+'">'+ini(b.name)+"</div>"
-        +'<span class="item-name">'+esc(b.name)+"</span>"
-        +'<button class="del-btn" title="Remove" onclick="event.stopPropagation();deleteBot(\''+b.id+'\')"><i class="ti ti-trash"></i></button>';
-      list.appendChild(el);
+function loadBots() {
+  apiFetch('/bots').then(r => r.json()).then(bots => {
+    customBots = {};
+    const frag = document.createDocumentFragment();
+    bots.forEach(b => {
+      customBots[b.id] = b;
+      const el = document.createElement('div');
+      el.className = 'bot-item';
+      const av = document.createElement('div');
+      av.className = 'av';
+      av.style.background = ac(b.name);
+      av.textContent = ini(b.name);
+      const nm = document.createElement('span');
+      nm.className = 'item-name';
+      nm.textContent = b.name;
+      const del = document.createElement('button');
+      del.className = 'del-btn';
+      del.title = 'Remove';
+      del.innerHTML = '<i class="ti ti-trash"></i>';
+      del.onclick = e => { e.stopPropagation(); deleteBot(b.id); };
+      el.appendChild(av); el.appendChild(nm); el.appendChild(del);
+      frag.appendChild(el);
     });
+    DOM.botList.textContent = '';
+    DOM.botList.appendChild(frag);
     refreshBotPills();
   });
 }
-if(SESSION_TOKEN){loadBots();}
-function refreshBotPills(){
-  var sel=document.getElementById("botSelector"),opts=document.getElementById("botOptions");
-  opts.innerHTML="";
-  var mn=document.getElementById("statusText").textContent||"Main Bot";
-  var mp=document.createElement("div");mp.className="bot-pill"+(activeBotId==="main"?" active":"");mp.dataset.id="main";
-  mp.innerHTML='<div class="mini-av" style="background:#5865f2">'+ini(mn)+"</div><span>"+esc(mn)+"</span>";
-  mp.onclick=function(){selectBot("main");};opts.appendChild(mp);
-  Object.keys(customBots).forEach(function(id){
-    var b=customBots[id],pill=document.createElement("div");
-    pill.className="bot-pill"+(activeBotId===id?" active":"");pill.dataset.id=id;
-    pill.innerHTML='<div class="mini-av" style="background:'+ac(b.name)+'">'+ini(b.name)+"</div><span>"+esc(b.name)+"</span>";
-    pill.onclick=function(){selectBot(id);};opts.appendChild(pill);
+function refreshBotPills() {
+  const frag = document.createDocumentFragment();
+  const mn = DOM.statusText.textContent || 'Main Bot';
+  const mp = document.createElement('div');
+  mp.className = 'bot-pill' + (activeBotId === 'main' ? ' active' : '');
+  mp.dataset.id = 'main';
+  const mav = document.createElement('div');
+  mav.className = 'mini-av';
+  mav.style.background = '#5865f2';
+  mav.textContent = ini(mn);
+  const mnm = document.createElement('span');
+  mnm.textContent = mn;
+  mp.appendChild(mav); mp.appendChild(mnm);
+  mp.onclick = () => selectBot('main');
+  frag.appendChild(mp);
+  Object.keys(customBots).forEach(id => {
+    const b = customBots[id];
+    const pill = document.createElement('div');
+    pill.className = 'bot-pill' + (activeBotId === id ? ' active' : '');
+    pill.dataset.id = id;
+    const av = document.createElement('div');
+    av.className = 'mini-av';
+    av.style.background = ac(b.name);
+    av.textContent = ini(b.name);
+    const nm = document.createElement('span');
+    nm.textContent = b.name;
+    pill.appendChild(av); pill.appendChild(nm);
+    pill.onclick = () => selectBot(id);
+    frag.appendChild(pill);
   });
-  sel.style.display=Object.keys(customBots).length>0?"block":"none";
+  DOM.botOptions.textContent = '';
+  DOM.botOptions.appendChild(frag);
+  DOM.botSelector.style.display = Object.keys(customBots).length > 0 ? 'block' : 'none';
 }
-function selectBot(id){
-  activeBotId=id;
-  document.querySelectorAll(".bot-pill").forEach(function(p){p.classList.remove("active");});
-  var a=document.querySelector('.bot-pill[data-id="'+id+'"]');if(a)a.classList.add("active");
+function selectBot(id) {
+  activeBotId = id;
+  document.querySelectorAll('.bot-pill').forEach(p => p.classList.remove('active'));
+  const a = DOM.botOptions.querySelector(`.bot-pill[data-id="${id}"]`);
+  if (a) a.classList.add('active');
 }
 
-/* ── misc ─────────────────────────────────────────── */
-function scrollToMsg(id){
-  var el=document.getElementById("msg-"+id);
-  if(el){el.scrollIntoView({behavior:"smooth",block:"center"});el.style.background="rgba(88,101,242,.25)";setTimeout(function(){el.style.background=""},1200);}
+// ── Scroll helpers ────────────────────────────────────────────────────────────
+function scrollToMsg(id) {
+  const el = document.getElementById('msg-' + id);
+  if (el) {
+    el.scrollIntoView({behavior:'smooth', block:'center'});
+    el.style.background = 'rgba(88,101,242,.22)';
+    setTimeout(() => { el.style.background = ''; }, 1200);
+  }
 }
-function jumpToNotif(){
-  if(lastNotifId){scrollToMsg(lastNotifId);notifCount=0;document.getElementById("notifBadge").style.display="none";}
+function jumpToNotif() {
+  if (lastNotifId) {
+    scrollToMsg(lastNotifId);
+    notifCount = 0;
+    DOM.notifBadge.style.display = 'none';
+  }
 }
-document.getElementById("msgInput").addEventListener("keydown",function(e){
-  if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();doSend();}
-  if(e.key==="Escape")cancelReply();
+
+// ── Toast (single timer, reused element) ─────────────────────────────────────
+function showToast(msg, type, icon) {
+  DOM.toast.className = 'show ' + (type || 'ok');
+  DOM.toast.innerHTML = `<i class="ti ${icon || 'ti-check'}" style="font-size:15px"></i> ${esc(msg)}`;
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { DOM.toast.className = ''; }, 3200);
+}
+
+// ── Composer keyboard handling ────────────────────────────────────────────────
+DOM.msgInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); doSend(); }
+  if (e.key === 'Escape') cancelReply();
 });
-document.getElementById("msgInput").addEventListener("input",function(){
-  this.style.height="auto";this.style.height=Math.min(this.scrollHeight,120)+"px";
+DOM.msgInput.addEventListener('input', function() {
+  this.style.height = 'auto';
+  this.style.height = Math.min(this.scrollHeight, 120) + 'px';
 });
+
+// ── Boot ──────────────────────────────────────────────────────────────────────
+if (SESSION_TOKEN) {
+  submitToken();
+}
 </script>
 </body>
 </html>
