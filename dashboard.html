@@ -636,7 +636,7 @@ function showMentionList(members){
   list.innerHTML="";mentionIdx=-1;
   members.forEach(function(m,i){
     var item=document.createElement("div");item.className="mention-item";item.dataset.idx=i;
-    item.innerHTML='<img class="mention-av" src="'+esc(m.avatar_url)+'" onerror="this.style.display='none'">'+
+    item.innerHTML='<img class="mention-av" src="'+esc(m.avatar_url)+'" onerror="this.remove()">'+
       '<span class="mention-name">'+esc(m.name)+'</span><span class="mention-uname">@'+esc(m.username)+'</span>';
     item.onclick=function(){insertMention(m);};
     list.appendChild(item);
@@ -675,8 +675,14 @@ function showProfile(uid,name,avUrl){
   document.getElementById("popName").textContent=name;
   document.getElementById("popUsername").textContent=uid?"User ID: "+uid:"";
   var wrap=document.getElementById("popAvWrap");
-  if(avUrl){wrap.innerHTML='<img class="pop-av" src="'+esc(avUrl)+'" onerror="this.outerHTML='<div class=\\"pop-av-fallback\\">"+ini(name)+"</div>'">'}
-  else{wrap.innerHTML='<div class="pop-av-fallback">'+ini(name)+'</div>';}
+  wrap.innerHTML="";
+  if(avUrl){
+    var img=document.createElement("img");img.className="pop-av";img.src=avUrl;
+    img.onerror=function(){wrap.innerHTML='<div class="pop-av-fallback">'+ini(name)+'</div>';};
+    wrap.appendChild(img);
+  } else {
+    wrap.innerHTML='<div class="pop-av-fallback">'+ini(name)+'</div>';
+  }
   pop.dataset.uid=uid||"";pop.dataset.name=name;pop.dataset.av=avUrl||"";
   pop.style.display="flex";
 }
