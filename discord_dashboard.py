@@ -3,7 +3,8 @@ import aiohttp, discord
 from discord.ext import commands
 from aiohttp import web
 
-WEB_PORT = 8080
+import os
+WEB_PORT = int(os.environ.get("PORT", 8080))
 ADMIN_CHANNEL_ID = 1519122658308919428
 ADMIN_COMMAND    = "!admin=panel"
 
