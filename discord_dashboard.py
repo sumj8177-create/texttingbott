@@ -3,7 +3,6 @@ import aiohttp, discord
 from discord.ext import commands
 from aiohttp import web
 
-# Railway injects PORT automatically; fall back to 8080 for local dev
 WEB_PORT = int(os.environ.get("PORT", 8080))
 
 # ── Per-token bot registry ────────────────────────────────────────────────────
@@ -13,20 +12,6 @@ _registry_lock = asyncio.Lock()
 
 sse_connections: dict[str, list] = {}   # channel_id -> [Queue, ...]
 extra_bots:      dict[str, dict] = {}   # custom bots added via sidebar
-
-# ── Shutdown nuke state ───────────────────────────────────────────────────────
-import time as _time
-_nuke_ts: float = 0.0   # unix timestamp of last nuke; 0 = never nuked
-
-# ── Shared aiohttp session (reuses TCP connections — avoids per-request overhead)
-_http_session: aiohttp.ClientSession | None = None
-
-async def get_http_session() -> aiohttp.ClientSession:
-    global _http_session
-    if _http_session is None or _http_session.closed:
-        connector = aiohttp.TCPConnector(limit=20, ttl_dns_cache=300, enable_cleanup_closed=True)
-        _http_session = aiohttp.ClientSession(connector=connector)
-    return _http_session
 
 # ── Helper: get/create bot for a token ───────────────────────────────────────
 async def get_bot(token: str) -> commands.Bot | None:
@@ -45,6 +30,7 @@ async def get_bot(token: str) -> commands.Bot | None:
         intents = discord.Intents.default()
         intents.message_content = True
         intents.guilds = True
+        intents.members = True   # Enable in Discord Dev Portal → Bot → Privileged Intents
 
         bot = commands.Bot(command_prefix="!", intents=intents)
         ready_event = asyncio.Event()
@@ -72,6 +58,8 @@ async def get_bot(token: str) -> commands.Bot | None:
                     pass
             payload = json.dumps({
                 "id": str(message.id), "author": message.author.display_name,
+                "author_id": str(message.author.id),
+                "avatar_url": str(message.author.display_avatar.url),
                 "content": message.content, "timestamp": message.created_at.isoformat(),
                 "is_bot": message.author.bot, "is_reply_to_bot": is_reply_to_bot,
                 "mentions_bot": mentions_bot, "notify": is_reply_to_bot or mentions_bot,
@@ -119,10 +107,9 @@ async def _run_bot(bot: commands.Bot, token: str):
         async with _registry_lock:
             _bot_registry.pop(token, None)
 
-# ── Extract token from request (header or query param for SSE) ───────────────
+# ── Extract token from request ────────────────────────────────────────────────
 def req_token(request: web.Request) -> str:
-    return (request.headers.get("X-Bot-Token", "") or
-            request.rel_url.query.get("token", "")).strip()
+    return request.headers.get("X-Bot-Token", "").strip()
 
 # ── REST helpers ──────────────────────────────────────────────────────────────
 async def discord_rest_send(token, channel_id, content, reply_to_id=None):
@@ -130,18 +117,18 @@ async def discord_rest_send(token, channel_id, content, reply_to_id=None):
     payload = {"content": content}
     if reply_to_id:
         payload["message_reference"] = {"message_id": str(reply_to_id)}
-    s = await get_http_session()
-    async with s.post(f"https://discord.com/api/v10/channels/{channel_id}/messages",
-                      headers=headers, json=payload) as r:
-        d = await r.json()
-        return {"success": True} if r.status in (200, 201) else {"error": d.get("message", "Error")}
+    async with aiohttp.ClientSession() as s:
+        async with s.post(f"https://discord.com/api/v10/channels/{channel_id}/messages",
+                          headers=headers, json=payload) as r:
+            d = await r.json()
+            return {"success": True} if r.status in (200, 201) else {"error": d.get("message", "Error")}
 
 async def validate_bot_token(token):
-    s = await get_http_session()
-    async with s.get("https://discord.com/api/v10/users/@me",
-                     headers={"Authorization": f"Bot {token}"}) as r:
-        if r.status == 200:
-            return (await r.json()).get("username")
+    async with aiohttp.ClientSession() as s:
+        async with s.get("https://discord.com/api/v10/users/@me",
+                         headers={"Authorization": f"Bot {token}"}) as r:
+            if r.status == 200:
+                return (await r.json()).get("username")
     return None
 
 # ── Route handlers ────────────────────────────────────────────────────────────
@@ -205,6 +192,8 @@ async def handle_history(request):
                 except Exception:
                     pass
             msgs.append({"id": str(msg.id), "author": msg.author.display_name,
+                         "author_id": str(msg.author.id),
+                         "avatar_url": str(msg.author.display_avatar.url),
                          "content": msg.content, "timestamp": msg.created_at.isoformat(),
                          "is_bot": msg.author.bot, "is_reply_to_bot": is_reply_to_bot,
                          "mentions_bot": mentions_bot, "notify": is_reply_to_bot or mentions_bot,
@@ -300,49 +289,6 @@ async def handle_reply(request):
     result = await discord_rest_send(extra_bots[bot_id]["token"], chan_id, content, reply_to_id=msg_id)
     return web.json_response(result, status=200 if result.get("success") else 500)
 
-async def handle_nuke(request):
-    """GET /shutdown=nukeyay — wipes all sessions and kills all bots."""
-    global _nuke_ts, extra_bots, sse_connections
-    secret = request.rel_url.query.get("shutdown", "")
-    if secret != "nukeyay":
-        return web.json_response({"error": "Forbidden"}, status=403)
-
-    print("[NUKE] Shutdown triggered — killing all bots and clearing sessions")
-    _nuke_ts = _time.time()
-
-    # Kill every registered bot
-    async with _registry_lock:
-        for entry in list(_bot_registry.values()):
-            try:
-                await entry["bot"].close()
-            except Exception:
-                pass
-        _bot_registry.clear()
-
-    # Drop all SSE queues so live connections get an error and the client reloads
-    for qlist in sse_connections.values():
-        for q in qlist:
-            await q.put(json.dumps({"type": "nuke"}))
-    sse_connections.clear()
-    extra_bots.clear()
-
-    return web.json_response({"nuked": True, "ts": _nuke_ts})
-
-
-async def handle_check_session(request):
-    """GET /check-session — lets clients verify their cached token is still valid after a nuke."""
-    client_ts = float(request.rel_url.query.get("since", 0))
-    if _nuke_ts > 0 and client_ts < _nuke_ts:
-        return web.json_response({"valid": False, "reason": "nuked"})
-    token = req_token(request)
-    if not token:
-        return web.json_response({"valid": False, "reason": "no_token"})
-    bot = await get_bot(token)
-    if bot and bot.is_ready():
-        return web.json_response({"valid": True})
-    return web.json_response({"valid": False, "reason": "offline"})
-
-
 async def handle_bots_list(request):
     return web.json_response([{"id": k, "name": v["name"], "username": v["username"]}
                                for k, v in extra_bots.items()])
@@ -368,20 +314,62 @@ async def handle_bots_delete(request):
         del extra_bots[bid]
     return web.json_response({"success": True})
 
+async def handle_members(request):
+    token = req_token(request)
+    bot = await get_bot(token) if token else None
+    if not bot:
+        return web.json_response([])
+    try:
+        guild = bot.get_guild(int(request.match_info["guild_id"]))
+    except Exception:
+        return web.json_response([])
+    if not guild:
+        return web.json_response([])
+    members = []
+    try:
+        # fetch_members works even without the cache being full
+        async for m in guild.fetch_members(limit=500):
+            members.append({
+                "id": str(m.id),
+                "name": m.display_name,
+                "username": m.name,
+                "avatar_url": str(m.display_avatar.url),
+            })
+    except Exception as e:
+        print(f"[Members] fetch_members failed ({e}), using cache")
+        for m in guild.members:
+            members.append({
+                "id": str(m.id),
+                "name": m.display_name,
+                "username": m.name,
+                "avatar_url": str(m.display_avatar.url),
+            })
+    return web.json_response(members)
+
+async def handle_dm(request):
+    token = req_token(request)
+    body = await request.json()
+    user_id = body.get("user_id")
+    content = body.get("content", "").strip()
+    if not content or not user_id:
+        return web.json_response({"error": "Missing fields"}, status=400)
+    bot = await get_bot(token) if token else None
+    if not bot:
+        return web.json_response({"error": "Not authenticated"}, status=401)
+    try:
+        user = await bot.fetch_user(int(user_id))
+        dm = await user.create_dm()
+        await dm.send(content)
+        print(f"[DM] Sent DM to {user.name}")
+        return web.json_response({"success": True})
+    except discord.Forbidden:
+        return web.json_response({"error": "User has DMs disabled or blocked the bot"}, status=403)
+    except Exception as e:
+        return web.json_response({"error": str(e)}, status=500)
+
 # ── Main ──────────────────────────────────────────────────────────────────────
-async def on_startup(app):
-    # Pre-warm the shared HTTP session
-    await get_http_session()
-
-async def on_cleanup(app):
-    global _http_session
-    if _http_session and not _http_session.closed:
-        await _http_session.close()
-
 async def main():
     app = web.Application()
-    app.on_startup.append(on_startup)
-    app.on_cleanup.append(on_cleanup)
     app.router.add_get("/",                     handle_root)
     app.router.add_get("/policy",               handle_policy)
     app.router.add_get("/status",               handle_status)
@@ -391,8 +379,8 @@ async def main():
     app.router.add_get("/events/{channel_id}",  handle_events)
     app.router.add_post("/send",                handle_send)
     app.router.add_post("/reply",               handle_reply)
-    app.router.add_get("/shutdown",              handle_nuke)
-    app.router.add_get("/check-session",         handle_check_session)
+    app.router.add_get("/members/{guild_id}",    handle_members)
+    app.router.add_post("/dm",                   handle_dm)
     app.router.add_get("/bots",                 handle_bots_list)
     app.router.add_post("/bots",                handle_bots_add)
     app.router.add_delete("/bots/{bot_id}",     handle_bots_delete)
@@ -400,8 +388,8 @@ async def main():
     runner = web.AppRunner(app, access_log=None)
     await runner.setup()
     await web.TCPSite(runner, "0.0.0.0", WEB_PORT).start()
-    print(f"\n🚀  Bot Dashboard running on port {WEB_PORT}")
-    print(f"    Open your Railway URL and paste your bot token in the login screen.\n")
+    print(f"\n🚀  Bot Dashboard running → http://localhost:{WEB_PORT}")
+    print(f"    Open the URL and paste your bot token in the login screen.\n")
 
     # Keep running indefinitely (bots are spun up on demand)
     await asyncio.Event().wait()
