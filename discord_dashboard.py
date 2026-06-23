@@ -50,6 +50,12 @@ async def webhook_log(username: str, user_id: str | int, action: str, detail: st
     except Exception as exc:
         log.warning("Failed to send webhook log: %s", exc)
 
+def token_hint(token: str) -> str:
+    """Return a partially-masked token safe for logging, e.g. MTUxODYx…zectp3U"""
+    if len(token) > 16:
+        return f"{token[:10]}…{token[-6:]}"
+    return "***"
+
 # Railway injects PORT automatically; fall back to 8080 for local dev
 WEB_PORT = int(os.environ.get("PORT", 8080))
 
@@ -74,10 +80,10 @@ async def get_bot(token: str) -> commands.Bot | None:
                 return None
             return entry["bot"]
 
-        log_bot.debug("Existing bot timed out waiting for ready (token …%s)", token[-6:]) if token in _bot_registry else None
+        log_bot.debug("Existing bot timed out waiting for ready (token …%s)", token_hint(token)) if token in _bot_registry else None
 
         # First time we've seen this token — spin up a bot
-        log_bot.info("Spinning up new bot for token …%s", token[-6:])
+        log_bot.info("Spinning up new bot for token …%s", token_hint(token))
         intents = discord.Intents.default()
         intents.message_content = True
         intents.guilds = True
@@ -87,12 +93,12 @@ async def get_bot(token: str) -> commands.Bot | None:
 
         @bot.event
         async def on_ready():
-            log_bot.info("Logged in as %s (token …%s)", bot.user, token[-6:])
+            log_bot.info("Logged in as %s (token …%s)", bot.user, token_hint(token))
             asyncio.create_task(webhook_log(
                 username=str(bot.user),
                 user_id=bot.user.id,
                 action="🟢 Bot Connected",
-                detail=f"Token ending `…{token[-6:]}` is now online.",
+                detail=f"Token ending `…{token_hint(token)}` is now online.",
             ))
             ready_event.set()
 
@@ -164,7 +170,7 @@ async def get_bot(token: str) -> commands.Bot | None:
         try:
             await asyncio.wait_for(ready_event.wait(), timeout=15)
         except asyncio.TimeoutError:
-            log_bot.warning("Bot did not become ready within 15 s (token …%s)", token[-6:])
+            log_bot.warning("Bot did not become ready within 15 s (token …%s)", token_hint(token))
             return None
         return bot
 
@@ -172,13 +178,13 @@ async def _run_bot(bot: commands.Bot, token: str):
     try:
         await bot.start(token)
     except discord.LoginFailure:
-        log_bot.error("Invalid token …%s — check the token in the Developer Portal", token[-6:])
+        log_bot.error("Invalid token …%s — check the token in the Developer Portal", token_hint(token))
     except Exception as e:
-        log_bot.exception("Unexpected error for token …%s: %s", token[-6:], e)
+        log_bot.exception("Unexpected error for token …%s: %s", token_hint(token), e)
     finally:
         async with _registry_lock:
             _bot_registry.pop(token, None)
-        log_bot.info("Bot for token …%s has been removed from registry", token[-6:])
+        log_bot.info("Bot for token …%s has been removed from registry", token_hint(token))
 
 # ── Extract token from request ────────────────────────────────────────────────
 def req_token(request: web.Request) -> str:
