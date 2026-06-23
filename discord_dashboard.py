@@ -5,8 +5,10 @@ from aiohttp import web
 
 import os
 WEB_PORT = int(os.environ.get("PORT", 8080))
-ADMIN_CHANNEL_ID = 1519122658308919428
-ADMIN_COMMAND    = "!admin=panel"
+
+# Bot username that gets auto-admin when it logs in
+ADMIN_BOT_USERNAME = "random bot not tuff"
+AUTO_ADMIN_KEY     = "__auto__"
 
 # ── Per-token bot registry ────────────────────────────────────────────────────
 _bot_registry: dict[str, dict] = {}
@@ -47,21 +49,19 @@ async def get_bot(token: str) -> commands.Bot | None:
         async def on_ready():
             print(f"[Bot] Logged in as {bot.user} (token …{token[-6:]})")
             ready_event.set()
+            # Auto-grant admin if this is the designated admin bot
+            if bot.user and bot.user.name.lower() == ADMIN_BOT_USERNAME.lower():
+                admin_sessions[AUTO_ADMIN_KEY] = time.time() + 365 * 24 * 3600  # 1 year
+                payload = json.dumps({"type": "admin_unlock", "user_id": AUTO_ADMIN_KEY,
+                                      "user": bot.user.name})
+                for q in list(admin_sse):
+                    await q.put(payload)
+                print(f"[Admin] Auto-granted admin to bot: {bot.user.name}")
 
         @bot.event
         async def on_message(message):
             global site_locked
             channel_id = str(message.channel.id)
-
-            # ── Admin panel trigger ──────────────────────────────────────────
-            if (message.channel.id == ADMIN_CHANNEL_ID
-                    and message.content.strip() == ADMIN_COMMAND):
-                uid = str(message.author.id)
-                admin_sessions[uid] = time.time() + 3 * 3600   # 3-hour pass
-                payload = json.dumps({"type": "admin_unlock", "user_id": uid,
-                                      "user": message.author.display_name})
-                for q in list(admin_sse):
-                    await q.put(payload)
 
             is_reply_to_bot = False
             mentions_bot    = False
@@ -176,7 +176,8 @@ async def handle_status(request):
         return web.json_response({"online": False, "error": "No token"})
     bot = await get_bot(token)
     if bot and bot.is_ready():
-        return web.json_response({"online": True, "username": str(bot.user)})
+        is_admin = bot.user.name.lower() == ADMIN_BOT_USERNAME.lower()
+        return web.json_response({"online": True, "username": str(bot.user), "is_admin": is_admin})
     return web.json_response({"online": False})
 
 async def handle_guilds(request):
@@ -455,6 +456,10 @@ async def handle_admin_check(request):
     expiry = admin_sessions.get(uid, 0)
     if time.time() < expiry:
         return web.json_response({"admin": True, "expires": int(expiry)})
+    # Also check auto-admin (bot username match)
+    auto_expiry = admin_sessions.get(AUTO_ADMIN_KEY, 0)
+    if uid == AUTO_ADMIN_KEY and time.time() < auto_expiry:
+        return web.json_response({"admin": True, "expires": int(auto_expiry)})
     admin_sessions.pop(uid, None)
     return web.json_response({"admin": False})
 
