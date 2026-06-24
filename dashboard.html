@@ -5,214 +5,300 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bot Dashboard</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#0d0f17;--sb:#13151f;--panel:#181b28;--surf:#1f2235;--bord:#2a2d3e;
-      --acc:#f25858;--adim:rgba(88,101,242,.15);--green:#3ba55c;--red:#ed4245;
-      --yel:#faa61a;--txt:#e3e5f0;--mut:#7b7f9e;--orange:#f47b42}
+:root{
+  --bg:#170d0d;--sb:#1f1010;--panel:#261414;--surf:#2e1919;--bord:#3d2222;
+  --acc:#c0392b;--acc2:#e05a4a;--adim:rgba(192,57,43,.15);
+  --green:#2ecc71;--red:#e74c3c;--yel:#f39c12;--pink:#e91e8c;
+  --txt:#f0e6e6;--sub:#b89090;--mut:#6b4040;
+  --r:8px;--r-lg:12px;
+}
 html,body{height:100%;background:var(--bg);color:var(--txt)}
-body{font-family:Inter,system-ui,sans-serif;display:flex;flex-direction:column}
+body{font-family:Inter,system-ui,sans-serif;display:flex;flex-direction:column;font-size:14px}
+
+/* ── scrollbars ── */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--bord);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--mut)}
+
 /* ── header ── */
-#hdr{display:flex;align-items:center;gap:11px;padding:10px 18px;background:var(--sb);border-bottom:1px solid var(--bord);flex-shrink:0;z-index:10}
-.logo{width:28px;height:28px;border-radius:50%;background:var(--acc);display:flex;align-items:center;justify-content:center}
-.logo i{font-size:14px;color:#fff}
-#hdr h1{font-size:14px;font-weight:600}
-.hdr-right{display:flex;align-items:center;gap:8px;margin-left:auto}
-a.policy-link{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--mut);padding:5px 10px;border:1px solid var(--bord);border-radius:6px;text-decoration:none;transition:all .12s}
-a.policy-link:hover{color:var(--txt);border-color:var(--acc)}
-.notif-wrap{position:relative;cursor:pointer;padding:5px;border-radius:6px;transition:background .12s}
+#hdr{display:flex;align-items:center;gap:12px;padding:0 20px;height:52px;
+     background:var(--sb);border-bottom:1px solid var(--bord);flex-shrink:0;
+     box-shadow:0 1px 0 rgba(0,0,0,.3)}
+.logo{width:30px;height:30px;border-radius:50%;background:var(--acc);
+      display:flex;align-items:center;justify-content:center;flex-shrink:0;
+      box-shadow:0 0 0 3px var(--adim)}
+.logo i{font-size:15px;color:#fff}
+#hdr h1{font-size:14px;font-weight:700;letter-spacing:.01em}
+.hdr-right{display:flex;align-items:center;gap:10px;margin-left:auto}
+a.policy-link{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--sub);
+              padding:5px 11px;border:1px solid var(--bord);border-radius:var(--r);
+              text-decoration:none;transition:all .15s;background:var(--panel)}
+a.policy-link:hover{color:var(--txt);border-color:var(--acc);background:var(--adim)}
+.notif-wrap{position:relative;cursor:pointer;padding:6px;border-radius:var(--r);transition:background .15s}
 .notif-wrap:hover{background:var(--surf)}
-.notif-wrap i{font-size:18px;color:var(--mut)}
-#notifBadge{display:none;position:absolute;top:1px;right:1px;min-width:16px;height:16px;padding:0 4px;background:var(--red);color:#fff;border-radius:8px;font-size:10px;font-weight:700;line-height:16px;text-align:center}
-.status-pill{display:flex;align-items:center;gap:7px;font-size:12px;font-family:"JetBrains Mono",monospace;color:var(--mut)}
-.dot{width:8px;height:8px;border-radius:50%;background:var(--mut);transition:background .3s}
-.dot.online{background:var(--green)}
-/* lock banner */
-#lockBanner{display:none;position:fixed;top:0;left:0;right:0;z-index:9998;background:var(--red);color:#fff;text-align:center;padding:7px;font-size:13px;font-weight:600;letter-spacing:.03em}
-#lockBanner.show{display:block}
+.notif-wrap i{font-size:18px;color:var(--sub)}
+#notifBadge{display:none;position:absolute;top:2px;right:2px;min-width:16px;height:16px;
+            padding:0 4px;background:var(--red);color:#fff;border-radius:8px;
+            font-size:10px;font-weight:700;line-height:16px;text-align:center}
+.status-pill{display:flex;align-items:center;gap:8px;font-size:12px;
+             font-family:"JetBrains Mono",monospace;color:var(--sub);
+             background:var(--panel);border:1px solid var(--bord);
+             border-radius:20px;padding:4px 12px 4px 8px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--mut);transition:background .3s;flex-shrink:0}
+.dot.online{background:var(--green);box-shadow:0 0 6px var(--green)}
+.dot.nuked{background:var(--red);box-shadow:0 0 6px var(--red)}
+
 /* ── layout ── */
 #ws{display:flex;flex:1;overflow:hidden}
-aside{width:220px;min-width:180px;background:var(--sb);border-right:1px solid var(--bord);display:flex;flex-direction:column;overflow:hidden}
-.aside-head{padding:12px 14px 6px;font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);display:flex;align-items:center}
-.add-btn{margin-left:auto;width:20px;height:20px;border-radius:4px;background:none;border:1px solid var(--bord);color:var(--mut);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .12s}
+aside{width:224px;min-width:180px;background:var(--sb);border-right:1px solid var(--bord);
+      display:flex;flex-direction:column;overflow:hidden}
+.aside-head{padding:14px 14px 6px;font-size:10px;font-weight:700;letter-spacing:.12em;
+            text-transform:uppercase;color:var(--mut);display:flex;align-items:center}
+.add-btn{margin-left:auto;width:22px;height:22px;border-radius:5px;background:none;
+         border:1px solid var(--bord);color:var(--mut);cursor:pointer;
+         display:flex;align-items:center;justify-content:center;font-size:14px;transition:all .15s}
 .add-btn:hover{background:var(--acc);border-color:var(--acc);color:#fff}
 .scroll-list{overflow-y:auto;padding:0 8px}
-.scroll-list::-webkit-scrollbar{width:4px}
-.scroll-list::-webkit-scrollbar-thumb{background:var(--bord);border-radius:2px}
-.srv,.bot-item,.dm-item{display:flex;align-items:center;gap:9px;padding:7px 9px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:var(--mut);border:1px solid transparent;margin-bottom:2px;transition:background .12s,color .12s}
-.srv:hover,.bot-item:hover,.dm-item:hover{background:var(--surf);color:var(--txt)}
-.srv.active,.dm-item.active{background:var(--surf);color:var(--txt);border-color:var(--bord)}
-.av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0}
+.srv,.bot-item{display:flex;align-items:center;gap:9px;padding:7px 9px;border-radius:var(--r);
+               cursor:pointer;font-size:13px;font-weight:500;color:var(--sub);
+               border:1px solid transparent;margin-bottom:2px;transition:all .15s}
+.srv:hover,.bot-item:hover{background:var(--surf);color:var(--txt)}
+.srv.active{background:var(--surf);color:var(--txt);border-color:var(--bord)}
+.av{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;
+    justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0}
 .item-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
-.del-btn{background:none;border:none;color:transparent;cursor:pointer;padding:2px;border-radius:3px;display:flex;align-items:center;transition:all .12s}
+.del-btn{background:none;border:none;color:transparent;cursor:pointer;
+         padding:3px;border-radius:4px;display:flex;align-items:center;transition:all .15s}
 .bot-item:hover .del-btn{color:var(--mut)}
-.del-btn:hover{color:var(--red) !important;background:rgba(237,66,69,.1)}
+.del-btn:hover{color:var(--red) !important;background:rgba(237,66,69,.12)}
 hr.aside-div{border:none;border-top:1px solid var(--bord);margin:6px 10px}
-/* add bot form */
-#addBotForm{padding:8px 10px 12px;background:var(--surf);margin:0 8px 6px;border-radius:8px;border:1px solid var(--bord);display:none;flex-direction:column;gap:7px}
-.form-input{width:100%;background:var(--panel);border:1px solid var(--bord);border-radius:6px;padding:7px 10px;font-family:Inter,sans-serif;font-size:12.5px;color:var(--txt);outline:none;transition:border-color .12s}
+
+/* ── add bot form ── */
+#addBotForm{padding:10px 10px 14px;background:var(--surf);margin:0 8px 6px;
+            border-radius:var(--r-lg);border:1px solid var(--bord);display:none;flex-direction:column;gap:8px}
+.form-input{width:100%;background:var(--panel);border:1px solid var(--bord);border-radius:var(--r);
+            padding:8px 10px;font-family:Inter,sans-serif;font-size:12.5px;color:var(--txt);
+            outline:none;transition:border-color .15s}
 .form-input:focus{border-color:var(--acc)}
 .form-input::placeholder{color:var(--mut)}
 .form-row{display:flex;gap:6px}
-.form-btn{flex:1;padding:7px;background:var(--acc);border:none;border-radius:6px;color:#fff;font-family:Inter,sans-serif;font-size:12.5px;font-weight:500;cursor:pointer;transition:background .12s;display:flex;align-items:center;justify-content:center;gap:5px}
-.form-btn:hover{background:#7983f5}
-.form-btn.cancel{background:var(--bord);color:var(--mut)}
+.form-btn{flex:1;padding:8px;background:var(--acc);border:none;border-radius:var(--r);
+          color:#fff;font-family:Inter,sans-serif;font-size:12.5px;font-weight:600;
+          cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:5px}
+.form-btn:hover{background:var(--acc2)}
+.form-btn.cancel{background:var(--bord);color:var(--sub)}
 .form-btn.cancel:hover{background:var(--surf);color:var(--txt)}
-.form-btn:disabled{opacity:.5;cursor:not-allowed}
+.form-btn:disabled{opacity:.45;cursor:not-allowed}
 .form-hint{font-size:10.5px;color:var(--mut);text-align:center;line-height:1.5}
-/* main content */
+
+/* ── main content ── */
 main{flex:1;display:flex;flex-direction:column;overflow:hidden}
-#chanBar{display:flex;align-items:center;gap:7px;padding:9px 16px;background:var(--panel);border-bottom:1px solid var(--bord);flex-shrink:0;min-height:48px;overflow-x:auto}
-#chanBar::-webkit-scrollbar{height:3px}
-#chanBar::-webkit-scrollbar-thumb{background:var(--bord)}
-.chan-lbl{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);flex-shrink:0;margin-right:4px}
-.chip{padding:4px 10px;border-radius:20px;border:1px solid var(--bord);font-size:12px;font-family:"JetBrains Mono",monospace;color:var(--mut);cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .12s}
-.chip:hover{border-color:rgba(88,101,242,.5);color:var(--txt)}
-.chip.active{background:var(--adim);border-color:var(--acc);color:#7983f5}
-#msgLog{flex:1;overflow-y:auto;padding:12px 16px;display:flex;flex-direction:column;gap:1px}
-#msgLog::-webkit-scrollbar{width:6px}
-#msgLog::-webkit-scrollbar-thumb{background:var(--bord);border-radius:3px}
-.log-state{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--mut);font-size:13px;text-align:center;line-height:1.7}
-.log-state i{font-size:36px}
-/* messages */
-.msg-item{padding:5px 8px 5px 10px;border-radius:6px;cursor:pointer;border-left:2px solid transparent;margin-left:-10px;position:relative;transition:background .1s}
+#chanBar{display:flex;align-items:center;gap:7px;padding:10px 18px;
+         background:var(--panel);border-bottom:1px solid var(--bord);
+         flex-shrink:0;min-height:50px;overflow-x:auto}
+.chan-lbl{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+          color:var(--mut);flex-shrink:0;margin-right:4px}
+.chip{padding:4px 12px;border-radius:20px;border:1px solid var(--bord);font-size:12px;
+      font-family:"JetBrains Mono",monospace;color:var(--sub);cursor:pointer;
+      white-space:nowrap;flex-shrink:0;transition:all .15s}
+.chip:hover{border-color:rgba(192,57,43,.5);color:var(--txt)}
+.chip.active{background:var(--adim);border-color:var(--acc);color:var(--acc2)}
+#msgLog{flex:1;overflow-y:auto;padding:14px 18px;display:flex;flex-direction:column;gap:1px}
+.log-state{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+           gap:12px;color:var(--mut);font-size:13px;text-align:center;line-height:1.7}
+.log-state i{font-size:40px;opacity:.6}
+
+/* ── messages ── */
+.msg-item{padding:6px 8px 6px 12px;border-radius:var(--r);cursor:pointer;
+          border-left:2px solid transparent;margin-left:-12px;position:relative;transition:background .1s}
 .msg-item:hover{background:var(--surf)}
 .msg-item:hover .msg-acts{opacity:1}
-.msg-item.notif{border-left-color:var(--yel);background:rgba(250,166,26,.07)}
-@keyframes fadeUp{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
-.msg-item{animation:fadeUp .15s ease}
-.ref-bar{display:flex;align-items:center;gap:5px;margin-bottom:3px;padding-left:44px;font-size:12px;color:var(--mut);cursor:pointer;overflow:hidden}
+.msg-item.notif{border-left-color:var(--yel);background:rgba(250,166,26,.06)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.msg-item{animation:fadeUp .18s ease}
+.ref-bar{display:flex;align-items:center;gap:5px;margin-bottom:3px;padding-left:46px;
+         font-size:12px;color:var(--mut);cursor:pointer;overflow:hidden}
 .ref-bar:hover{color:var(--txt)}
-.ref-author{font-weight:500;color:var(--acc);flex-shrink:0}
+.ref-author{font-weight:600;color:var(--acc);flex-shrink:0}
 .ref-content{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.notif-bar{display:flex;align-items:center;gap:5px;padding:1px 8px 3px 44px;font-size:11px;color:var(--yel);font-weight:500}
-.msg-body{display:flex;gap:10px;align-items:flex-start}
-.msg-av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
+.notif-bar{display:flex;align-items:center;gap:5px;padding:1px 8px 4px 46px;
+           font-size:11px;color:var(--yel);font-weight:600}
+.msg-body{display:flex;gap:11px;align-items:flex-start}
+.msg-av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;
+        justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
 .msg-right{flex:1;min-width:0}
-.msg-meta{display:flex;align-items:baseline;gap:7px;margin-bottom:2px;flex-wrap:wrap}
-.msg-author{font-size:13px;font-weight:600;color:var(--txt)}
+.msg-meta{display:flex;align-items:baseline;gap:7px;margin-bottom:3px;flex-wrap:wrap}
+.msg-author{font-size:13px;font-weight:700;color:var(--txt)}
 .msg-time{font-size:11px;color:var(--mut);font-family:"JetBrains Mono",monospace}
-.msg-text{font-size:14px;color:var(--txt);line-height:1.55;word-break:break-word;white-space:pre-wrap}
-.badge{font-size:10px;font-weight:600;padding:1px 6px;border-radius:4px;letter-spacing:.04em;text-transform:uppercase}
-.b-bot{background:rgba(88,101,242,.2);color:#7983f5}
-.b-reply{background:rgba(250,166,26,.2);color:var(--yel)}
+.msg-text{font-size:14px;color:var(--txt);line-height:1.6;word-break:break-word;white-space:pre-wrap}
+.badge{font-size:10px;font-weight:700;padding:1px 6px;border-radius:4px;letter-spacing:.05em;text-transform:uppercase}
+.b-bot{background:rgba(192,57,43,.2);color:var(--acc2)}
+.b-reply{background:rgba(250,166,26,.18);color:var(--yel)}
 .b-mention{background:rgba(237,66,69,.15);color:#ed8587}
-.b-dm{background:rgba(244,123,66,.2);color:var(--orange)}
-.msg-acts{position:absolute;top:4px;right:6px;opacity:0;transition:opacity .12s;display:flex;gap:4px}
-.act-btn{display:flex;align-items:center;gap:4px;padding:4px 9px;background:var(--panel);border:1px solid var(--bord);border-radius:6px;color:var(--mut);cursor:pointer;font-size:12px;font-family:Inter,sans-serif;transition:all .1s}
+.msg-acts{position:absolute;top:5px;right:8px;opacity:0;transition:opacity .15s;display:flex;gap:4px}
+.act-btn{display:flex;align-items:center;gap:4px;padding:4px 10px;background:var(--panel);
+         border:1px solid var(--bord);border-radius:var(--r);color:var(--sub);
+         cursor:pointer;font-size:12px;font-family:Inter,sans-serif;font-weight:500;transition:all .12s}
 .act-btn:hover{background:var(--acc);border-color:var(--acc);color:#fff}
-/* reply bar */
-#replyBar{display:none;align-items:center;gap:8px;padding:7px 16px;background:var(--surf);border-top:1px solid var(--bord);font-size:12px;color:var(--mut);flex-shrink:0}
-#replyBar .ri{font-size:15px;color:var(--acc);flex-shrink:0}
-#replyAuthor{font-weight:500;color:var(--acc);flex-shrink:0}
+.act-btn.del:hover{background:var(--red);border-color:var(--red);color:#fff}
+
+/* ── members / DMs panel ── */
+.member-item{display:flex;align-items:center;gap:9px;padding:7px 9px;border-radius:var(--r);
+             cursor:pointer;font-size:13px;font-weight:500;color:var(--sub);
+             border:1px solid transparent;margin-bottom:2px;transition:all .15s;position:relative}
+.member-item:hover{background:var(--surf);color:var(--txt)}
+.member-av-wrap{position:relative;flex-shrink:0}
+.member-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;
+           justify-content:center;font-size:11px;font-weight:700;color:#fff;overflow:hidden}
+.member-av img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.status-dot{position:absolute;bottom:-1px;right:-1px;width:10px;height:10px;border-radius:50%;
+            border:2px solid var(--sb);flex-shrink:0}
+.status-dot.online{background:var(--green)}
+.status-dot.idle{background:var(--yel)}
+.status-dot.dnd{background:var(--red)}
+.status-dot.offline{background:var(--mut)}
+.member-info{flex:1;min-width:0}
+.member-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;color:var(--txt)}
+.member-status-txt{font-size:11px;color:var(--mut);text-transform:capitalize}
+.aside-section{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+               color:var(--mut);padding:8px 16px 4px;margin-top:4px}
+
+/* ── DM view overlay ── */
+#dmView{position:absolute;inset:0;background:var(--bg);z-index:100;display:none;flex-direction:column}
+#dmView.open{display:flex}
+#dmHeader{display:flex;align-items:center;gap:12px;padding:0 18px;height:52px;
+          background:var(--sb);border-bottom:1px solid var(--bord);flex-shrink:0}
+#dmBackBtn{display:flex;align-items:center;gap:6px;padding:6px 12px;background:none;
+           border:1px solid var(--bord);border-radius:var(--r);color:var(--sub);
+           cursor:pointer;font-size:13px;font-weight:500;font-family:Inter,sans-serif;transition:all .15s}
+#dmBackBtn:hover{border-color:var(--acc);color:var(--txt);background:var(--adim)}
+#dmUserInfo{display:flex;align-items:center;gap:10px;flex:1}
+.dm-av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+       font-size:12px;font-weight:700;color:#fff;overflow:hidden;flex-shrink:0}
+.dm-av img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+#dmUserName{font-size:15px;font-weight:700;color:var(--txt)}
+#dmUserStatus{font-size:12px;color:var(--sub);margin-top:1px}
+#dmMsgLog{flex:1;overflow-y:auto;padding:14px 18px;display:flex;flex-direction:column;gap:1px}
+#dmComposer{padding:12px 18px 14px;background:var(--panel);border-top:1px solid var(--bord);flex-shrink:0}
+.dm-comp-inner{display:flex;gap:9px;align-items:flex-end;background:var(--surf);
+               border:1px solid var(--bord);border-radius:var(--r-lg);padding:9px 13px;transition:border-color .15s}
+.dm-comp-inner:focus-within{border-color:var(--acc)}
+#dmInput{flex:1;background:transparent;border:none;outline:none;resize:none;
+         font-family:Inter,system-ui,sans-serif;font-size:14px;color:var(--txt);
+         min-height:36px;max-height:120px;caret-color:var(--acc);line-height:1.5}
+#dmInput::placeholder{color:var(--mut)}
+
+/* ── member status section dividers ── */
+.status-section-hdr{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+                    color:var(--mut);padding:6px 12px 2px;margin-top:4px}
+
+/* ── reply bar ── */
+#replyBar{display:none;align-items:center;gap:8px;padding:8px 18px;
+          background:var(--surf);border-top:1px solid var(--bord);font-size:12px;color:var(--sub);flex-shrink:0}
+#replyBar .ri{font-size:16px;color:var(--acc);flex-shrink:0}
+#replyAuthor{font-weight:600;color:var(--acc);flex-shrink:0}
 #replyPreview{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
-#cancelBtn{background:none;border:none;color:var(--mut);cursor:pointer;padding:4px;border-radius:4px;display:flex;align-items:center}
+#cancelBtn{background:none;border:none;color:var(--mut);cursor:pointer;padding:4px;
+           border-radius:5px;display:flex;align-items:center;transition:all .12s}
 #cancelBtn:hover{background:var(--bord);color:var(--txt)}
-/* composer */
-#composer{display:none;padding:10px 16px 12px;background:var(--panel);border-top:1px solid var(--bord);flex-shrink:0}
-#botSelector{margin-bottom:8px}
-.bot-sel-label{font-size:11px;color:var(--mut);margin-bottom:5px}
+
+/* ── composer ── */
+#composer{display:none;padding:12px 18px 14px;background:var(--panel);
+          border-top:1px solid var(--bord);flex-shrink:0}
+#botSelector{margin-bottom:9px}
+.bot-sel-label{font-size:11px;color:var(--mut);margin-bottom:6px;font-weight:600;letter-spacing:.05em;text-transform:uppercase}
 #botOptions{display:flex;gap:5px;flex-wrap:wrap}
-.bot-pill{display:flex;align-items:center;gap:5px;padding:3px 10px 3px 5px;border-radius:20px;border:1px solid var(--bord);cursor:pointer;font-size:12px;color:var(--mut);transition:all .12s}
-.bot-pill:hover{border-color:rgba(88,101,242,.5);color:var(--txt)}
-.bot-pill.active{border-color:var(--acc);background:var(--adim);color:#7983f5}
-.mini-av{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;flex-shrink:0}
-.comp-inner{display:flex;gap:8px;align-items:flex-end;background:var(--surf);border:1px solid var(--bord);border-radius:8px;padding:8px 12px}
-textarea{flex:1;background:transparent;border:none;outline:none;resize:none;font-family:Inter,system-ui,sans-serif;font-size:14px;color:var(--txt);min-height:36px;max-height:120px;caret-color:var(--acc)}
+.bot-pill{display:flex;align-items:center;gap:5px;padding:3px 10px 3px 6px;border-radius:20px;
+          border:1px solid var(--bord);cursor:pointer;font-size:12px;color:var(--sub);
+          font-weight:500;transition:all .15s}
+.bot-pill:hover{border-color:rgba(192,57,43,.5);color:var(--txt)}
+.bot-pill.active{border-color:var(--acc);background:var(--adim);color:var(--acc2)}
+.mini-av{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;
+         justify-content:center;font-size:9px;font-weight:700;color:#fff;flex-shrink:0}
+.comp-inner{display:flex;gap:9px;align-items:flex-end;background:var(--surf);
+            border:1px solid var(--bord);border-radius:var(--r-lg);padding:9px 13px;transition:border-color .15s}
+.comp-inner:focus-within{border-color:var(--acc)}
+textarea{flex:1;background:transparent;border:none;outline:none;resize:none;
+         font-family:Inter,system-ui,sans-serif;font-size:14px;color:var(--txt);
+         min-height:36px;max-height:120px;caret-color:var(--acc);line-height:1.5}
 textarea::placeholder{color:var(--mut)}
-.send-btn{display:flex;align-items:center;gap:6px;padding:7px 14px;background:var(--acc);color:#fff;border:none;border-radius:6px;font-family:Inter,sans-serif;font-size:13px;font-weight:500;cursor:pointer;flex-shrink:0;transition:background .12s,transform .1s}
-.send-btn:hover{background:#7983f5}
+.send-btn{display:flex;align-items:center;gap:6px;padding:8px 16px;background:var(--acc);
+          color:#fff;border:none;border-radius:var(--r);font-family:Inter,sans-serif;
+          font-size:13px;font-weight:600;cursor:pointer;flex-shrink:0;transition:all .15s}
+.send-btn:hover{background:var(--acc2);transform:translateY(-1px)}
 .send-btn:active{transform:scale(.97)}
-.send-btn:disabled{background:var(--bord);cursor:not-allowed;transform:none}
-.comp-hint{font-size:11px;color:var(--mut);margin-top:5px}
-/* lock overlay on composer */
-#composerLockMsg{display:none;padding:10px 16px;background:rgba(237,66,69,.12);border-top:1px solid var(--red);color:#ed8587;font-size:13px;font-weight:500;text-align:center;flex-shrink:0;gap:7px;align-items:center;justify-content:center}
-#composerLockMsg.show{display:flex}
-/* toast */
-#toast{position:fixed;bottom:24px;right:24px;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:500;opacity:0;pointer-events:none;transition:opacity .25s;z-index:999;display:flex;align-items:center;gap:8px}
+.send-btn:disabled{background:var(--bord);color:var(--mut);cursor:not-allowed;transform:none}
+.comp-hint{font-size:11px;color:var(--mut);margin-top:6px}
+
+/* ── toast ── */
+#toast{position:fixed;bottom:24px;right:24px;padding:9px 18px;border-radius:var(--r-lg);
+       font-size:13px;font-weight:500;opacity:0;pointer-events:none;transition:opacity .25s;
+       z-index:999;display:flex;align-items:center;gap:9px;box-shadow:0 8px 24px rgba(0,0,0,.4)}
 #toast.show{opacity:1}
-#toast.ok{background:#1a3a28;border:1px solid var(--green);color:#6be09a}
-#toast.warn{background:#3d3218;border:1px solid var(--yel);color:var(--yel)}
-#toast.err{background:#3d1a1b;border:1px solid var(--red);color:#ed8587}
+#toast.ok{background:#122a1e;border:1px solid var(--green);color:#6be09a}
+#toast.warn{background:#342c10;border:1px solid var(--yel);color:var(--yel)}
+#toast.err{background:#2e1213;border:1px solid var(--red);color:#ed8587}
+#toast.info{background:#2a1010;border:1px solid var(--acc);color:var(--acc2)}
 @keyframes spin{to{transform:rotate(360deg)}}
 .spinning{animation:spin 1s linear infinite;display:inline-block}
+
 /* ── token gate ── */
-#tokenGate{position:fixed;inset:0;background:rgba(10,11,18,.97);display:flex;align-items:center;justify-content:center;z-index:9999;backdrop-filter:blur(4px)}
+#tokenGate{position:fixed;inset:0;background:rgba(8,9,15,.97);display:flex;
+           align-items:center;justify-content:center;z-index:9999;backdrop-filter:blur(6px)}
 #tokenGate.hidden{display:none}
-.gate-card{background:var(--panel);border:1px solid var(--bord);border-radius:14px;padding:36px 32px;width:100%;max-width:420px;display:flex;flex-direction:column;gap:20px;box-shadow:0 24px 60px rgba(0,0,0,.6)}
-.gate-logo{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:4px}
-.gate-logo .logo{width:40px;height:40px}
-.gate-logo .logo i{font-size:20px}
-.gate-logo h2{font-size:18px;font-weight:600}
-.gate-desc{font-size:13px;color:var(--mut);text-align:center;line-height:1.65}
+.gate-card{background:var(--panel);border:1px solid var(--bord);border-radius:16px;
+           padding:38px 34px;width:100%;max-width:420px;display:flex;flex-direction:column;
+           gap:22px;box-shadow:0 32px 80px rgba(0,0,0,.7)}
+.gate-logo{display:flex;align-items:center;justify-content:center;gap:13px}
+.gate-logo .logo{width:42px;height:42px}
+.gate-logo .logo i{font-size:22px}
+.gate-logo h2{font-size:20px;font-weight:700}
+.gate-desc{font-size:13px;color:var(--sub);text-align:center;line-height:1.7}
 .gate-field{display:flex;flex-direction:column;gap:6px}
-.gate-field label{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--mut)}
+.gate-field label{font-size:11px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--mut)}
 .gate-input-wrap{position:relative;display:flex;align-items:center}
-.gate-input{width:100%;background:var(--surf);border:1px solid var(--bord);border-radius:8px;padding:10px 40px 10px 12px;font-family:"JetBrains Mono",monospace;font-size:13px;color:var(--txt);outline:none;transition:border-color .15s}
+.gate-input{width:100%;background:var(--surf);border:1px solid var(--bord);border-radius:var(--r-lg);
+            padding:11px 42px 11px 13px;font-family:"JetBrains Mono",monospace;font-size:13px;
+            color:var(--txt);outline:none;transition:border-color .15s}
 .gate-input:focus{border-color:var(--acc)}
 .gate-input::placeholder{color:var(--mut);font-family:Inter,sans-serif}
-.eye-btn{position:absolute;right:10px;background:none;border:none;color:var(--mut);cursor:pointer;padding:4px;display:flex;align-items:center;border-radius:4px;transition:color .12s}
+.eye-btn{position:absolute;right:11px;background:none;border:none;color:var(--mut);
+         cursor:pointer;padding:4px;display:flex;align-items:center;border-radius:5px;transition:color .12s}
 .eye-btn:hover{color:var(--txt)}
-.gate-btn{width:100%;padding:11px;background:var(--acc);border:none;border-radius:8px;color:#fff;font-family:Inter,sans-serif;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:background .15s,transform .1s}
-.gate-btn:hover{background:#7983f5}
+.gate-btn{width:100%;padding:12px;background:var(--acc);border:none;border-radius:var(--r-lg);
+          color:#fff;font-family:Inter,sans-serif;font-size:14px;font-weight:700;cursor:pointer;
+          display:flex;align-items:center;justify-content:center;gap:9px;transition:all .15s}
+.gate-btn:hover{background:var(--acc2);transform:translateY(-1px)}
 .gate-btn:active{transform:scale(.98)}
 .gate-btn:disabled{background:var(--bord);color:var(--mut);cursor:not-allowed;transform:none}
-.gate-error{font-size:12px;color:#ed8587;text-align:center;min-height:18px;display:flex;align-items:center;justify-content:center;gap:5px}
-.gate-note{font-size:11px;color:var(--mut);text-align:center;display:flex;align-items:center;justify-content:center;gap:5px}
-/* ── online members panel ── */
-#onlinePanel{width:0;min-width:0;overflow:hidden;background:var(--sb);border-left:1px solid var(--bord);transition:width .2s,min-width .2s;display:flex;flex-direction:column}
-#onlinePanel.open{width:190px;min-width:150px}
-.online-head{padding:12px 14px 6px;font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);white-space:nowrap}
-.online-list{overflow-y:auto;padding:0 8px 12px;flex:1}
-.online-list::-webkit-scrollbar{width:4px}
-.online-list::-webkit-scrollbar-thumb{background:var(--bord);border-radius:2px}
-.omember{display:flex;align-items:center;gap:8px;padding:5px 7px;border-radius:6px;margin-bottom:1px;font-size:12px;font-weight:500;color:var(--mut);white-space:nowrap;overflow:hidden}
-.omember .av{width:24px;height:24px;font-size:8px;flex-shrink:0;position:relative}
-.status-dot{width:9px;height:9px;border-radius:50%;position:absolute;bottom:-1px;right:-1px;border:2px solid var(--sb)}
-.sd-online{background:var(--green)}
-.sd-idle{background:var(--yel)}
-.sd-dnd{background:var(--red)}
-.omember-name{overflow:hidden;text-overflow:ellipsis;color:var(--txt)}
-/* ── admin panel modal ── */
-#adminModal{display:none;position:fixed;inset:0;background:rgba(10,11,18,.92);z-index:9990;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
-#adminModal.show{display:flex}
-.admin-card{background:var(--panel);border:1px solid var(--bord);border-radius:14px;padding:32px 28px;width:100%;max-width:480px;display:flex;flex-direction:column;gap:18px;box-shadow:0 24px 60px rgba(0,0,0,.7)}
-.admin-title{display:flex;align-items:center;gap:10px;font-size:16px;font-weight:700}
-.admin-title i{font-size:20px;color:var(--orange)}
-.admin-subtitle{font-size:12px;color:var(--mut);margin-top:-10px}
-.admin-section{background:var(--surf);border:1px solid var(--bord);border-radius:10px;padding:16px}
-.admin-section-label{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);margin-bottom:10px}
-.admin-btns{display:flex;flex-direction:column;gap:8px}
-.admin-btn{display:flex;align-items:center;gap:10px;padding:10px 14px;border:none;border-radius:8px;font-family:Inter,sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;color:#fff}
-.admin-btn i{font-size:16px}
-.admin-btn.red{background:rgba(237,66,69,.2);color:var(--red);border:1px solid rgba(237,66,69,.35)}
-.admin-btn.red:hover{background:var(--red);color:#fff}
-.admin-btn.green{background:rgba(59,165,92,.2);color:var(--green);border:1px solid rgba(59,165,92,.35)}
-.admin-btn.green:hover{background:var(--green);color:#fff}
-.admin-btn.useless{background:rgba(123,127,158,.12);color:var(--mut);border:1px solid var(--bord);cursor:not-allowed;opacity:.7}
-.admin-btn.useless:hover{background:rgba(123,127,158,.2)}
-.admin-close-row{display:flex;justify-content:flex-end}
-.admin-close-btn{padding:7px 18px;background:var(--bord);border:none;border-radius:7px;color:var(--mut);font-family:Inter,sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .12s;display:flex;align-items:center;gap:6px}
-.admin-close-btn:hover{background:var(--surf);color:var(--txt)}
-.lock-status-bar{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:500;padding:8px 0 0}
-.lock-ind{width:10px;height:10px;border-radius:50%}
-/* ── useless modal ── */
-#uselessModal{display:none;position:fixed;inset:0;background:rgba(10,11,18,.85);z-index:10000;align-items:center;justify-content:center}
-#uselessModal.show{display:flex}
-.useless-card{background:var(--panel);border:1px solid var(--bord);border-radius:12px;padding:28px 24px;max-width:360px;width:100%;display:flex;flex-direction:column;gap:14px;text-align:center;box-shadow:0 20px 50px rgba(0,0,0,.7)}
-.useless-card i.big{font-size:40px;color:var(--mut)}
-.useless-card h3{font-size:15px;font-weight:700}
-.useless-card p{font-size:13px;color:var(--mut);line-height:1.6}
-.useless-back{padding:8px 18px;background:var(--acc);border:none;border-radius:7px;color:#fff;font-family:Inter,sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:background .12s;display:inline-flex;align-items:center;gap:7px;margin:0 auto}
-.useless-back:hover{background:#7983f5}
+.gate-error{font-size:12px;color:#ed8587;text-align:center;min-height:18px;
+            display:flex;align-items:center;justify-content:center;gap:6px}
+.gate-note{font-size:11px;color:var(--mut);text-align:center;display:flex;
+           align-items:center;justify-content:center;gap:5px}
+
+/* ── nuke overlay ── */
+#nukeOverlay{position:fixed;inset:0;background:rgba(8,9,15,.97);display:none;
+             align-items:center;justify-content:center;z-index:9998;backdrop-filter:blur(6px)}
+#nukeOverlay.show{display:flex}
+.nuke-card{background:var(--panel);border:1px solid var(--red);border-radius:16px;
+           padding:38px 34px;width:100%;max-width:420px;text-align:center;
+           display:flex;flex-direction:column;gap:18px;
+           box-shadow:0 0 60px rgba(237,66,69,.25),0 32px 80px rgba(0,0,0,.7)}
+.nuke-icon{font-size:52px;line-height:1}
+.nuke-card h2{font-size:20px;font-weight:700;color:var(--red)}
+.nuke-card p{font-size:13px;color:var(--sub);line-height:1.7}
+.nuke-btn{width:100%;padding:12px;background:var(--acc);border:none;border-radius:var(--r-lg);
+          color:#fff;font-family:Inter,sans-serif;font-size:14px;font-weight:700;cursor:pointer;
+          display:flex;align-items:center;justify-content:center;gap:9px;transition:all .15s}
+.nuke-btn:hover{background:var(--acc2)}
 </style>
 </head>
 <body>
-
-<!-- Lock Banner -->
-<div id="lockBanner"><i class="ti ti-lock"></i> SITE LOCKED — Messaging is disabled by an admin</div>
 
 <!-- Token Gate -->
 <div id="tokenGate">
@@ -221,7 +307,7 @@ textarea::placeholder{color:var(--mut)}
       <div class="logo"><i class="ti ti-bolt"></i></div>
       <h2>Bot Dashboard</h2>
     </div>
-    <p class="gate-desc">Enter your Discord bot token to connect.<br>Session lasts 3 hours, then you'll need to re-enter it.</p>
+    <p class="gate-desc">Enter your Discord bot token to connect.<br>Your token is kept in memory only and never stored.</p>
     <div class="gate-field">
       <label for="gateToken">Bot Token</label>
       <div class="gate-input-wrap">
@@ -231,49 +317,17 @@ textarea::placeholder{color:var(--mut)}
     </div>
     <div class="gate-error" id="gateError"></div>
     <button class="gate-btn" id="gateBtn" onclick="submitToken()"><i class="ti ti-plug-connected"></i> Connect Bot</button>
-    <div class="gate-note"><i class="ti ti-lock" style="font-size:12px"></i> Token is never saved to disk or sent to any third party</div>
+    <div class="gate-note"><i class="ti ti-lock" style="font-size:12px"></i> Token is never saved to disk or sent to any third party and sorry about how long it takes</div>
   </div>
 </div>
 
-<!-- Admin Modal -->
-<div id="adminModal">
-  <div class="admin-card">
-    <div>
-      <div class="admin-title"><i class="ti ti-shield-lock"></i> Admin Panel</div>
-      <div class="admin-subtitle">Full control dashboard — handle with care</div>
-    </div>
-    <div class="admin-section">
-      <div class="admin-section-label">Site Lockdown</div>
-      <div class="admin-btns">
-        <button class="admin-btn red" id="lockBtn" onclick="adminLock()"><i class="ti ti-lock"></i> Lock Site — Disable All Messaging</button>
-        <button class="admin-btn green" id="unlockBtn" onclick="adminUnlock()"><i class="ti ti-lock-open"></i> Unlock Site — Re-enable Messaging</button>
-      </div>
-      <div class="lock-status-bar">
-        <div class="lock-ind" id="lockInd" style="background:var(--green)"></div>
-        <span id="lockStatusText" style="color:var(--mut)">Site is currently unlocked</span>
-      </div>
-    </div>
-    <div class="admin-section">
-      <div class="admin-section-label">Custom Bots</div>
-      <div class="admin-btns">
-        <button class="admin-btn useless" onclick="showUseless()"><i class="ti ti-robot"></i> Manage Custom Bots</button>
-      </div>
-    </div>
-    <div class="admin-close-row">
-      <button class="admin-close-btn" onclick="closeAdminPanel()"><i class="ti ti-x"></i> Close Panel</button>
-    </div>
-  </div>
-</div>
-
-<!-- Useless modal -->
-<div id="uselessModal">
-  <div class="useless-card">
-    <i class="ti ti-robot-off big"></i>
-    <h3>Custom Bots — Not Available</h3>
-    <p>This feature currently does not work and has no functional purpose.<br>It has been disabled.</p>
-    <button class="useless-back" onclick="document.getElementById('uselessModal').classList.remove('show');document.getElementById('adminModal').classList.add('show')">
-      <i class="ti ti-arrow-left"></i> Back to Admin Panel
-    </button>
+<!-- Nuke Overlay (shown when /shutdown=nukeyay fires) -->
+<div id="nukeOverlay">
+  <div class="nuke-card">
+    <div class="nuke-icon">💥</div>
+    <h2>Session Nuked</h2>
+    <p>All bot sessions have been cleared by the server administrator.<br>Please re-enter your token to reconnect.</p>
+    <button class="nuke-btn" onclick="reloginAfterNuke()"><i class="ti ti-refresh"></i> Re-Login</button>
   </div>
 </div>
 
@@ -286,12 +340,6 @@ textarea::placeholder{color:var(--mut)}
     <div class="notif-wrap" onclick="jumpToNotif()" title="Jump to latest mention">
       <i class="ti ti-bell"></i><span id="notifBadge"></span>
     </div>
-    <button id="adminBtn" onclick="openAdminPanel()" title="Admin Panel" style="display:none;background:rgba(244,123,66,.15);border:1px solid rgba(244,123,66,.4);color:var(--orange);padding:5px 11px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;display:none;align-items:center;gap:5px;font-family:Inter,sans-serif">
-      <i class="ti ti-shield-lock"></i> Admin
-    </button>
-    <button onclick="logout()" title="Logout" style="background:none;border:1px solid var(--bord);color:var(--mut);padding:5px 11px;border-radius:6px;cursor:pointer;font-size:12px;font-family:Inter,sans-serif;display:flex;align-items:center;gap:5px;transition:all .12s" onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)'" onmouseout="this.style.borderColor='var(--bord)';this.style.color='var(--mut)'">
-      <i class="ti ti-logout"></i> Logout
-    </button>
     <div class="status-pill">
       <div class="dot" id="statusDot"></div>
       <span id="statusText">connecting...</span>
@@ -299,13 +347,39 @@ textarea::placeholder{color:var(--mut)}
   </div>
 </div>
 
-<div id="ws">
+<!-- Workspace -->
+<div id="ws" style="position:relative">
+  <!-- DM View Overlay -->
+  <div id="dmView">
+    <div id="dmHeader">
+      <button id="dmBackBtn" onclick="closeDM()"><i class="ti ti-arrow-left"></i> Back</button>
+      <div id="dmUserInfo">
+        <div class="dm-av" id="dmAvatar"></div>
+        <div>
+          <div id="dmUserName">—</div>
+          <div id="dmUserStatus">—</div>
+        </div>
+      </div>
+    </div>
+    <div id="dmMsgLog"><div class="log-state"><i class="ti ti-loader spinning"></i><div>Loading…</div></div></div>
+    <div id="dmComposer">
+      <div class="dm-comp-inner">
+        <textarea id="dmInput" placeholder="Send a DM…" rows="1"></textarea>
+        <button class="send-btn" id="dmSendBtn" onclick="doDmSend()"><i class="ti ti-send"></i> Send</button>
+      </div>
+      <div class="comp-hint">Enter to send · Shift+Enter for new line</div>
+    </div>
+  </div>
   <aside>
     <div class="aside-head">Servers</div>
     <div class="scroll-list" id="srvList" style="flex:1;padding-bottom:4px"></div>
     <hr class="aside-div">
-    <div class="aside-head">Direct Messages</div>
-    <div class="scroll-list" id="dmList" style="max-height:150px;padding-bottom:4px"></div>
+    <div class="aside-head">Members
+      <span id="memberCount" style="font-size:10px;color:var(--mut);margin-left:4px;font-weight:400;text-transform:none;letter-spacing:0"></span>
+    </div>
+    <div class="scroll-list" id="memberList" style="max-height:220px;padding-bottom:4px">
+      <div style="padding:8px 12px;font-size:12px;color:var(--mut);font-style:italic">Select a server to see members</div>
+    </div>
     <hr class="aside-div">
     <div class="aside-head">Custom Bots
       <button class="add-btn" id="addBotToggle" onclick="toggleAddBot()" title="Add bot"><i class="ti ti-plus"></i></button>
@@ -319,7 +393,7 @@ textarea::placeholder{color:var(--mut)}
       </div>
       <div class="form-hint"><i class="ti ti-lock" style="font-size:11px"></i> Token kept in memory only — never saved</div>
     </div>
-    <div class="scroll-list" id="botList" style="padding-bottom:12px"></div>
+    <div class="scroll-list" id="botList" style="padding-bottom:14px"></div>
   </aside>
 
   <main>
@@ -327,10 +401,9 @@ textarea::placeholder{color:var(--mut)}
     <div id="msgLog"><div class="log-state"><i class="ti ti-messages"></i><div>Select a server and channel<br>to see live messages</div></div></div>
     <div id="replyBar">
       <i class="ti ti-corner-up-right ri"></i>
-      <span>Replying to</span><span id="replyAuthor"></span><span id="replyPreview"></span>
+      <span>Replying to</span>&nbsp;<span id="replyAuthor"></span>&nbsp;<span id="replyPreview"></span>
       <button id="cancelBtn" onclick="cancelReply()"><i class="ti ti-x" style="font-size:15px"></i></button>
     </div>
-    <div id="composerLockMsg"><i class="ti ti-lock"></i> Messaging is currently locked by an admin</div>
     <div id="composer">
       <div id="botSelector" style="display:none">
         <div class="bot-sel-label">Send as:</div>
@@ -340,544 +413,463 @@ textarea::placeholder{color:var(--mut)}
         <textarea id="msgInput" placeholder="Select a channel..." rows="1"></textarea>
         <button class="send-btn" id="sendBtn" onclick="doSend()" disabled><i class="ti ti-send"></i> Send</button>
       </div>
-      <div class="comp-hint">Enter to send · Shift+Enter for new line · Click any message to reply</div>
+      <div class="comp-hint">Enter to send &middot; Shift+Enter for new line &middot; Click any message to reply</div>
     </div>
   </main>
-
-  <!-- Online members panel -->
-  <div id="onlinePanel">
-    <div class="online-head">🟢 Online</div>
-    <div class="online-list" id="onlineList"></div>
-  </div>
 </div>
 
 <div id="toast"></div>
 
 <script>
-/* ═══════════════════════════════════════════════════════════════
-   TOKEN / SESSION  — 3-hour expiry stored in sessionStorage
-   ══════════════════════════════════════════════════════════════ */
-var TOKEN_KEY  = "bot_token";
-var EXPIRY_KEY = "bot_token_expiry";
-var THREE_HOURS = 3 * 60 * 60 * 1000;
-
-function saveSession(token) {
-  sessionStorage.setItem(TOKEN_KEY, token);
-  sessionStorage.setItem(EXPIRY_KEY, Date.now() + THREE_HOURS);
-}
-function clearSession() {
-  sessionStorage.removeItem(TOKEN_KEY);
-  sessionStorage.removeItem(EXPIRY_KEY);
-}
-function loadSession() {
-  var t = sessionStorage.getItem(TOKEN_KEY);
-  var e = parseInt(sessionStorage.getItem(EXPIRY_KEY) || "0", 10);
-  if (t && Date.now() < e) return t;
-  clearSession();
-  return "";
-}
-
-var SESSION_TOKEN = loadSession();
-var ADMIN_USER_ID = sessionStorage.getItem("admin_uid") || "";
-
-// Auto-expire check every minute
-setInterval(function() {
-  var e = parseInt(sessionStorage.getItem(EXPIRY_KEY) || "0", 10);
-  if (SESSION_TOKEN && Date.now() >= e) {
-    showToast("Session expired — please log in again", "warn", "ti-clock");
-    setTimeout(logout, 2500);
-  }
-}, 60000);
-
-function logout() {
-  clearSession();
-  sessionStorage.removeItem("admin_uid");
-  if (evtSrc) { evtSrc.close(); evtSrc = null; }
-  if (adminEvtSrc) { adminEvtSrc.close(); adminEvtSrc = null; }
-  SESSION_TOKEN = "";
-  ADMIN_USER_ID = "";
-  location.reload();
-}
-
-/* Patch fetch to inject token header */
-var _origFetch = window.fetch;
-window.fetch = function(url, opts) {
-  if (typeof url === "string" && !url.startsWith("http")) {
-    opts = opts || {};
-    opts.headers = opts.headers || {};
-    if (SESSION_TOKEN) opts.headers["X-Bot-Token"] = SESSION_TOKEN;
-    if (ADMIN_USER_ID) opts.headers["X-Admin-User"] = ADMIN_USER_ID;
-  }
-  return _origFetch.apply(this, [url, opts]);
-};
-
-/* ─ gate ─ */
-function toggleEye() {
-  var inp = document.getElementById("gateToken"), icon = document.getElementById("eyeIcon");
-  if (inp.type === "password") { inp.type = "text"; icon.className = "ti ti-eye-off"; }
-  else { inp.type = "password"; icon.className = "ti ti-eye"; }
-}
-function setGateError(msg) {
-  var el = document.getElementById("gateError");
-  el.innerHTML = msg ? '<i class="ti ti-alert-circle"></i> ' + msg : "";
-}
-function submitToken() {
-  var token = document.getElementById("gateToken").value.trim();
-  if (!token) { setGateError("Please paste a bot token."); return; }
-  var btn = document.getElementById("gateBtn");
-  btn.disabled = true;
-  btn.innerHTML = '<i class="ti ti-loader spinning"></i> Verifying…';
-  setGateError("");
-  SESSION_TOKEN = token;
-  fetch("/status").then(function(r){return r.json();}).then(function(d) {
-    if (d.online) {
-      saveSession(token);
-      document.getElementById("tokenGate").classList.add("hidden");
-      initDashboard();
-    } else {
-      SESSION_TOKEN = "";
-      setGateError("Bot is offline or token is invalid.");
-      btn.disabled = false;
-      btn.innerHTML = '<i class="ti ti-plug-connected"></i> Connect Bot';
-    }
-  }).catch(function() {
-    SESSION_TOKEN = "";
-    setGateError("Could not reach the server.");
-    btn.disabled = false;
-    btn.innerHTML = '<i class="ti ti-plug-connected"></i> Connect Bot';
-  });
-}
-document.addEventListener("DOMContentLoaded", function() {
-  document.getElementById("gateToken").addEventListener("keydown", function(e) {
-    if (e.key === "Enter") submitToken();
-  });
-  if (SESSION_TOKEN) {
-    document.getElementById("tokenGate").classList.add("hidden");
-    initDashboard();
-  }
-});
-
-/* ═══════════════════════════════════════════════════════════════
-   CORE STATE
-   ══════════════════════════════════════════════════════════════ */
-var curServer=null,curChan=null,curChanId=null,replyMsg=null;
-var notifCount=0,lastNotifId=null,evtSrc=null,adminEvtSrc=null;
-var msgStore=new Map(),customBots={},activeBotId="main";
-var curDmUserId=null,dmEvtSrc=null;
-var siteLocked=false;
-
-var AV=['#5865f2','#3ba55c','#eb459e','#ed4245','#faa61a','#00b0f4','#9b59b6','#e67e22'];
+/* ── helpers ──────────────────────────────────────── */
+var AV=['#c0392b','#922b21','#e05a4a','#8e1a1a','#d35400','#a93226','#7b241c','#cb4335'];
 function ac(n){var h=0;for(var i=0;i<n.length;i++)h=((h<<5)-h+n.charCodeAt(i))|0;return AV[Math.abs(h)%AV.length]}
-function ini(n){return n.split(/\s+/).map(function(w){return w[0]||""}).join("").slice(0,2).toUpperCase()||"?"}
+function ini(n){return(n||"?").split(/\s+/).map(function(w){return w[0]||""}).join("").slice(0,2).toUpperCase()||"?"}
 function esc(t){return(t||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
 function fmt(iso){return new Date(iso).toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"})}
-
-/* ═══════════════════════════════════════════════════════════════
-   INIT
-   ══════════════════════════════════════════════════════════════ */
-function initDashboard() {
-  pollStatus();
-  loadServers();
-  loadBots();
-  loadDMs();
-  fetchLockStatus();
-  connectAdminSSE();
-  checkAdminSession();
-  setInterval(pollStatus, 8000);
-  setInterval(loadServers, 25000);
-  setInterval(loadDMs, 30000);
+var _tt=null;
+function showToast(msg,type,icon){
+  var t=document.getElementById("toast");
+  t.className="show "+(type||"ok");
+  t.innerHTML='<i class="ti '+(icon||"ti-check")+'" style="font-size:16px"></i> '+esc(msg);
+  if(_tt)clearTimeout(_tt);_tt=setTimeout(function(){t.className=""},3500);
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   STATUS
-   ══════════════════════════════════════════════════════════════ */
-function pollStatus() {
-  fetch("/status").then(function(r){return r.json();}).then(function(d) {
-    var dot = document.getElementById("statusDot"), txt = document.getElementById("statusText");
-    dot.className = "dot" + (d.online ? " online" : "");
-    txt.textContent = d.online ? d.username : "offline";
-    if (d.online) {
-      refreshBotPills();
-      // Auto-grant admin if this is the admin bot
-      if (d.is_admin && !ADMIN_USER_ID) {
-        ADMIN_USER_ID = "__auto__";
-        sessionStorage.setItem("admin_uid", "__auto__");
-        showAdminBtn();
-      }
+/* ── session token ────────────────────────────────── */
+var SESSION_TOKEN=sessionStorage.getItem("bot_token")||"";
+
+function applyTokenHeader(opts){
+  opts=opts||{};if(!opts.headers)opts.headers={};
+  if(SESSION_TOKEN)opts.headers["X-Bot-Token"]=SESSION_TOKEN;
+  return opts;
+}
+var _origFetch=window.fetch;
+window.fetch=function(url,opts){
+  if(typeof url==="string"&&!url.startsWith("http"))opts=applyTokenHeader(opts||{});
+  return _origFetch.apply(this,[url,opts]);
+};
+
+/* ── gate ─────────────────────────────────────────── */
+function toggleEye(){
+  var i=document.getElementById("gateToken"),ic=document.getElementById("eyeIcon");
+  i.type=i.type==="password"?"text":"password";
+  ic.className=i.type==="password"?"ti ti-eye":"ti ti-eye-off";
+}
+function setGateError(msg){
+  var e=document.getElementById("gateError");
+  e.innerHTML=msg?'<i class="ti ti-alert-circle"></i> '+msg:"";
+}
+function submitToken(){
+  var token=document.getElementById("gateToken").value.trim();
+  if(!token){setGateError("Please paste a bot token.");return;}
+  var btn=document.getElementById("gateBtn");
+  btn.disabled=true;btn.innerHTML='<i class="ti ti-loader spinning"></i> Verifying…';setGateError("");
+  SESSION_TOKEN=token;
+  fetch("/status").then(function(r){return r.json();}).then(function(d){
+    if(d.nuked){SESSION_TOKEN="";showNukeOverlay();btn.disabled=false;btn.innerHTML='<i class="ti ti-plug-connected"></i> Connect Bot';return;}
+    if(d.online){
+      sessionStorage.setItem("bot_token",token);
+      document.getElementById("tokenGate").classList.add("hidden");
+      pollStatus();loadServers();loadBots();
+    } else {
+      SESSION_TOKEN="";setGateError("Bot is offline or token is invalid.");
+      btn.disabled=false;btn.innerHTML='<i class="ti ti-plug-connected"></i> Connect Bot';
     }
-  }).catch(function() {
-    document.getElementById("statusDot").className = "dot";
-    document.getElementById("statusText").textContent = "offline";
+  }).catch(function(){
+    SESSION_TOKEN="";setGateError("Could not reach the server.");
+    btn.disabled=false;btn.innerHTML='<i class="ti ti-plug-connected"></i> Connect Bot';
   });
 }
+document.addEventListener("DOMContentLoaded",function(){
+  document.getElementById("gateToken").addEventListener("keydown",function(e){if(e.key==="Enter")submitToken();});
+  if(SESSION_TOKEN)submitToken();
+});
 
-/* ═══════════════════════════════════════════════════════════════
-   SERVERS
-   ══════════════════════════════════════════════════════════════ */
-function loadServers() {
-  fetch("/guilds").then(function(r){return r.json();}).then(function(gs) {
-    var list = document.getElementById("srvList"), aid = curServer ? curServer.id : null;
-    list.innerHTML = "";
-    if (!gs.length) {
-      list.innerHTML = '<div style="padding:10px 12px;font-size:12px;color:var(--mut)">No servers found</div>';
-      return;
-    }
-    gs.forEach(function(g) {
-      var el = document.createElement("div");
-      el.className = "srv" + (g.id === aid ? " active" : "");
-      el.id = "srv-" + g.id;
-      el.innerHTML = '<div class="av" style="background:' + ac(g.name) + '">' + ini(g.name) + '</div><span class="item-name">' + esc(g.name) + "</span>";
-      el.onclick = function() { pickServer(g, el); };
-      list.appendChild(el);
+/* ── nuke ─────────────────────────────────────────── */
+function showNukeOverlay(){
+  SESSION_TOKEN="";sessionStorage.removeItem("bot_token");
+  if(evtSrc){evtSrc.close();evtSrc=null;}
+  document.getElementById("nukeOverlay").classList.add("show");
+}
+function reloginAfterNuke(){
+  document.getElementById("nukeOverlay").classList.remove("show");
+  document.getElementById("tokenGate").classList.remove("hidden");
+  document.getElementById("gateToken").value="";
+  document.getElementById("gateToken").focus();
+  // Reset UI state
+  curServer=null;curChan=null;curChanId=null;replyMsg=null;notifCount=0;lastNotifId=null;
+  msgStore.clear();customBots={};activeBotId="main";
+  document.getElementById("srvList").innerHTML="";
+  document.getElementById("botList").innerHTML="";
+  document.getElementById("msgLog").innerHTML='<div class="log-state"><i class="ti ti-messages"></i><div>Select a server and channel<br>to see live messages</div></div>';
+  document.getElementById("chanBar").innerHTML='<span style="font-size:12px;color:var(--mut);font-style:italic">Select a server to begin</span>';
+  document.getElementById("composer").style.display="none";
+  document.getElementById("statusDot").className="dot";
+  document.getElementById("statusText").textContent="connecting...";
+}
+
+/* ── state ────────────────────────────────────────── */
+var curServer=null,curChan=null,curChanId=null,replyMsg=null,notifCount=0,lastNotifId=null,evtSrc=null;
+var msgStore=new Map(),customBots={},activeBotId="main";
+
+/* ── status poll ──────────────────────────────────── */
+function pollStatus(){
+  fetch("/status").then(function(r){return r.json();}).then(function(d){
+    if(d.nuked){showNukeOverlay();return;}
+    var dot=document.getElementById("statusDot"),txt=document.getElementById("statusText");
+    dot.className="dot"+(d.online?" online":"");
+    txt.textContent=d.online?d.username:"offline";
+    if(d.online)refreshBotPills();
+  }).catch(function(){
+    document.getElementById("statusDot").className="dot";
+    document.getElementById("statusText").textContent="offline";
+  });
+}
+if(SESSION_TOKEN){pollStatus();setInterval(pollStatus,5000);}
+else{setInterval(function(){if(SESSION_TOKEN){pollStatus();}},5000);}
+
+/* ── servers ──────────────────────────────────────── */
+function loadServers(){
+  fetch("/guilds").then(function(r){return r.json();}).then(function(gs){
+    var list=document.getElementById("srvList"),aid=curServer?curServer.id:null;
+    list.innerHTML="";
+    if(!gs.length){list.innerHTML='<div style="padding:10px 12px;font-size:12px;color:var(--mut)">No servers found</div>';return;}
+    gs.forEach(function(g){
+      var el=document.createElement("div");el.className="srv"+(g.id===aid?" active":"");el.id="srv-"+g.id;
+      el.innerHTML='<div class="av" style="background:'+ac(g.name)+'">'+ini(g.name)+'</div><span class="item-name">'+esc(g.name)+"</span>";
+      el.onclick=function(){pickServer(g,el);};list.appendChild(el);
     });
   }).catch(function(){});
 }
+if(SESSION_TOKEN){loadServers();setInterval(loadServers,20000);}
+else{setInterval(function(){if(SESSION_TOKEN){loadServers();}},20000);}
 
-function pickServer(g, el) {
+function pickServer(g,el){
   document.querySelectorAll(".srv").forEach(function(e){e.classList.remove("active");});
-  document.querySelectorAll(".dm-item").forEach(function(e){e.classList.remove("active");});
-  el.classList.add("active");
-  curServer = g; curChan = null; curChanId = null; curDmUserId = null;
-  cancelReply();
-  document.getElementById("composer").style.display = "none";
-  document.getElementById("sendBtn").disabled = true;
-  if (evtSrc) { evtSrc.close(); evtSrc = null; }
-  if (dmEvtSrc) { dmEvtSrc.close(); dmEvtSrc = null; }
-  var bar = document.getElementById("chanBar");
-  bar.innerHTML = '<span class="chan-lbl">Channel</span>';
-  fetch("/channels/" + g.id).then(function(r){return r.json();}).then(function(cs) {
-    if (!cs.length) {
-      bar.innerHTML = '<span style="font-size:12px;color:var(--mut);font-style:italic">No text channels</span>';
-      return;
-    }
-    cs.forEach(function(c) {
-      var chip = document.createElement("div");
-      chip.className = "chip";
-      chip.textContent = "#" + c.name;
-      chip.onclick = function() { pickChannel(c, chip); };
-      bar.appendChild(chip);
+  el.classList.add("active");curServer=g;curChan=null;curChanId=null;
+  cancelReply();document.getElementById("composer").style.display="none";document.getElementById("sendBtn").disabled=true;
+  if(evtSrc){evtSrc.close();evtSrc=null;}
+  var bar=document.getElementById("chanBar");bar.innerHTML='<span class="chan-lbl">Channel</span>';
+  fetch("/channels/"+g.id).then(function(r){return r.json();}).then(function(cs){
+    if(!cs.length){bar.innerHTML='<span style="font-size:12px;color:var(--mut);font-style:italic">No text channels</span>';return;}
+    cs.forEach(function(c){
+      var chip=document.createElement("div");chip.className="chip";chip.textContent="#"+c.name;
+      chip.onclick=function(){pickChannel(c,chip);};bar.appendChild(chip);
     });
   });
-  document.getElementById("msgLog").innerHTML = '<div class="log-state"><i class="ti ti-hash"></i><div>Pick a channel</div></div>';
-  loadOnlineMembers(g.id);
+  document.getElementById("msgLog").innerHTML='<div class="log-state"><i class="ti ti-hash"></i><div>Pick a channel</div></div>';
+  loadMembers(g.id);
 }
 
-function pickChannel(c, chip) {
+function pickChannel(c,chip){
   document.querySelectorAll(".chip").forEach(function(ch){ch.classList.remove("active");});
-  chip.classList.add("active");
-  curChan = c.name; curChanId = c.id; curDmUserId = null;
-  cancelReply();
-  if (dmEvtSrc) { dmEvtSrc.close(); dmEvtSrc = null; }
-  document.getElementById("composer").style.display = siteLocked ? "none" : "block";
-  document.getElementById("composerLockMsg").className = siteLocked ? "show" : "";
-  document.getElementById("sendBtn").disabled = false;
-  document.getElementById("msgInput").placeholder = "Message #" + c.name + "...";
+  chip.classList.add("active");curChan=c.name;curChanId=c.id;cancelReply();
+  document.getElementById("composer").style.display="block";
+  document.getElementById("sendBtn").disabled=false;
+  document.getElementById("msgInput").placeholder="Message #"+c.name+"...";
   document.getElementById("msgInput").focus();
-  refreshBotPills();
-  loadHistory(c.id);
-  connectSSE(c.id);
+  refreshBotPills();loadHistory(c.id);connectSSE(c.id);
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   ONLINE MEMBERS
-   ══════════════════════════════════════════════════════════════ */
-function loadOnlineMembers(gid) {
-  var panel = document.getElementById("onlinePanel");
-  var list  = document.getElementById("onlineList");
-  list.innerHTML = '<div style="padding:10px;font-size:12px;color:var(--mut)"><i class="ti ti-loader spinning"></i></div>';
-  panel.classList.add("open");
-  fetch("/members/" + gid).then(function(r){return r.json();}).then(function(members) {
-    list.innerHTML = "";
-    if (!members.length) {
-      list.innerHTML = '<div style="padding:8px;font-size:12px;color:var(--mut)">No one online</div>';
-      return;
-    }
-    var statOrder = {"online":0,"idle":1,"dnd":2};
-    members.sort(function(a,b){ return (statOrder[a.status]||3)-(statOrder[b.status]||3); });
-    members.forEach(function(m) {
-      var dotCls = m.status === "online" ? "sd-online" : m.status === "idle" ? "sd-idle" : "sd-dnd";
-      var el = document.createElement("div");
-      el.className = "omember";
-      el.innerHTML = '<div class="av" style="background:'+ac(m.name)+';position:relative">'+ini(m.name)
-        +'<span class="status-dot '+dotCls+'"></span></div>'
-        +'<span class="omember-name">'+esc(m.name)+(m.is_bot?' <span style="font-size:10px;opacity:.5">[bot]</span>':'')+' </span>';
-      list.appendChild(el);
-    });
-  }).catch(function() {
-    list.innerHTML = '<div style="padding:8px;font-size:12px;color:var(--mut)">Could not load</div>';
-  });
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   DMs
-   ══════════════════════════════════════════════════════════════ */
-function loadDMs() {
-  fetch("/dms").then(function(r){return r.json();}).then(function(dms) {
-    var list = document.getElementById("dmList");
-    list.innerHTML = "";
-    if (!dms || dms.error || !dms.length) {
-      list.innerHTML = '<div style="padding:6px 12px;font-size:12px;color:var(--mut)">No DMs</div>';
-      return;
-    }
-    dms.forEach(function(d) {
-      var el = document.createElement("div");
-      el.className = "dm-item" + (curDmUserId === d.id ? " active" : "");
-      el.id = "dm-" + d.id;
-      el.innerHTML = '<div class="av" style="background:'+ac(d.name)+'">'+ini(d.name)+'</div>'
-        +'<span class="item-name">'+esc(d.name)+'</span>'
-        +'<span class="badge b-dm" style="font-size:9px;padding:1px 4px">DM</span>';
-      el.onclick = function() { pickDM(d, el); };
-      list.appendChild(el);
-    });
-  }).catch(function(){});
-}
-
-function pickDM(d, el) {
-  document.querySelectorAll(".srv").forEach(function(e){e.classList.remove("active");});
-  document.querySelectorAll(".dm-item").forEach(function(e){e.classList.remove("active");});
-  el.classList.add("active");
-  curDmUserId = d.id; curServer = null; curChan = null; curChanId = null;
-  cancelReply();
-  if (evtSrc) { evtSrc.close(); evtSrc = null; }
-  if (dmEvtSrc) { dmEvtSrc.close(); dmEvtSrc = null; }
-  document.getElementById("onlinePanel").classList.remove("open");
-  var bar = document.getElementById("chanBar");
-  bar.innerHTML = '<span class="chan-lbl"><i class="ti ti-message-circle" style="margin-right:4px"></i> DM with</span>'
-    +'<span style="font-size:13px;font-weight:600;color:var(--txt)">'+esc(d.name)+'</span>';
-  document.getElementById("composer").style.display = siteLocked ? "none" : "block";
-  document.getElementById("composerLockMsg").className = siteLocked ? "show" : "";
-  document.getElementById("sendBtn").disabled = false;
-  document.getElementById("msgInput").placeholder = "Message " + d.name + "...";
-  document.getElementById("msgInput").focus();
-  loadDMHistory(d.id);
-  connectDMSSE(d.id);
-}
-
-function loadDMHistory(uid) {
-  var log = document.getElementById("msgLog");
-  log.innerHTML = '<div class="log-state"><i class="ti ti-loader spinning"></i><div>Loading DMs...</div></div>';
+/* ── history + SSE ────────────────────────────────── */
+function loadHistory(cid){
+  var log=document.getElementById("msgLog");
+  log.innerHTML='<div class="log-state"><i class="ti ti-loader spinning"></i><div>Loading...</div></div>';
   msgStore.clear();
-  fetch("/dms/" + uid + "/history").then(function(r){return r.json();}).then(function(msgs) {
-    log.innerHTML = "";
-    if (msgs.error) {
-      log.innerHTML = '<div class="log-state"><i class="ti ti-lock"></i><div>'+esc(msgs.error)+'</div></div>';
-      return;
-    }
-    if (!msgs.length) {
-      log.innerHTML = '<div class="log-state"><i class="ti ti-message-off"></i><div>No DMs yet</div></div>';
-      return;
-    }
-    msgs.forEach(function(m){log.appendChild(buildMsg(m, true));});
-    log.scrollTop = log.scrollHeight;
-  }).catch(function(){
-    log.innerHTML = '<div class="log-state"><i class="ti ti-wifi-off"></i><div>Failed to load</div></div>';
-  });
+  fetch("/history/"+cid).then(function(r){return r.json();}).then(function(msgs){
+    log.innerHTML="";
+    if(msgs.error){log.innerHTML='<div class="log-state"><i class="ti ti-lock"></i><div>'+esc(msgs.error)+"</div></div>";return;}
+    if(!msgs.length){log.innerHTML='<div class="log-state"><i class="ti ti-message-off"></i><div>No messages yet</div></div>';return;}
+    msgs.forEach(function(m){log.appendChild(buildMsg(m,false));});log.scrollTop=log.scrollHeight;
+  }).catch(function(){log.innerHTML='<div class="log-state"><i class="ti ti-wifi-off"></i><div>Failed to load</div></div>';});
 }
 
-function connectDMSSE(uid) {
-  dmEvtSrc = new EventSource("/dms/" + uid + "/events");
-  dmEvtSrc.onmessage = function(e) {
-    try {
-      var msg = JSON.parse(e.data);
-      if (msg.type === "ping") return;
-      var log = document.getElementById("msgLog"), ph = log.querySelector(".log-state");
-      if (ph) ph.remove();
-      log.appendChild(buildMsg(msg, true));
-      log.scrollTop = log.scrollHeight;
-    } catch(err) {}
-  };
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   HISTORY / SSE
-   ══════════════════════════════════════════════════════════════ */
-function loadHistory(cid) {
-  var log = document.getElementById("msgLog");
-  log.innerHTML = '<div class="log-state"><i class="ti ti-loader spinning"></i><div>Loading...</div></div>';
-  msgStore.clear();
-  fetch("/history/" + cid).then(function(r){return r.json();}).then(function(msgs) {
-    log.innerHTML = "";
-    if (msgs.error) {
-      log.innerHTML = '<div class="log-state"><i class="ti ti-lock"></i><div>'+esc(msgs.error)+'</div></div>';
-      return;
-    }
-    if (!msgs.length) {
-      log.innerHTML = '<div class="log-state"><i class="ti ti-message-off"></i><div>No messages yet</div></div>';
-      return;
-    }
-    msgs.forEach(function(m){log.appendChild(buildMsg(m));});
-    log.scrollTop = log.scrollHeight;
-  }).catch(function(){
-    log.innerHTML = '<div class="log-state"><i class="ti ti-wifi-off"></i><div>Failed to load</div></div>';
-  });
-}
-
-function connectSSE(cid) {
-  if (evtSrc) { evtSrc.close(); evtSrc = null; }
-  evtSrc = new EventSource("/events/" + cid);
-  evtSrc.onmessage = function(e) {
-    try {
-      var msg = JSON.parse(e.data); if (msg.type === "ping") return;
-      var log = document.getElementById("msgLog"), ph = log.querySelector(".log-state");
-      if (ph) ph.remove();
-      log.appendChild(buildMsg(msg));
-      log.scrollTop = log.scrollHeight;
-      if (msg.notify) {
-        notifCount++; lastNotifId = msg.id;
-        document.getElementById("notifBadge").textContent = notifCount;
-        document.getElementById("notifBadge").style.display = "block";
-        showToast((msg.is_reply_to_bot ? msg.author+" replied!" : msg.author+" mentioned the bot!"), "warn", "ti-bell-ringing");
+function connectSSE(cid){
+  if(evtSrc){evtSrc.close();evtSrc=null;}
+  evtSrc=new EventSource("/events/"+cid);
+  evtSrc.onmessage=function(e){
+    try{
+      var msg=JSON.parse(e.data);
+      if(msg.type==="ping")return;
+      if(msg.type==="shutdown"){showNukeOverlay();return;}
+      var log=document.getElementById("msgLog"),ph=log.querySelector(".log-state");if(ph)ph.remove();
+      log.appendChild(buildMsg(msg,false));log.scrollTop=log.scrollHeight;
+      if(msg.notify){
+        notifCount++;lastNotifId=msg.id;
+        document.getElementById("notifBadge").textContent=notifCount;
+        document.getElementById("notifBadge").style.display="block";
+        showToast((msg.is_reply_to_bot?msg.author+" replied to the bot!":msg.author+" mentioned the bot!"),"warn","ti-bell-ringing");
       }
-    } catch(err) {}
+    }catch(err){}
   };
+  evtSrc.onerror=function(){/* reconnects automatically */};
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   BUILD MESSAGE
-   ══════════════════════════════════════════════════════════════ */
-function buildMsg(msg, isDM) {
-  msgStore.set(msg.id, msg);
-  var el = document.createElement("div");
-  el.className = "msg-item" + (msg.notify ? " notif" : "");
-  el.id = "msg-" + msg.id;
-  var h = "";
-  if (msg.reference) {
-    h += '<div class="ref-bar" data-rid="'+msg.reference.id+'"><i class="ti ti-corner-up-left"></i>'
-      +'<span class="ref-author">'+esc(msg.reference.author)+'</span>'
-      +'<span class="ref-content">'+esc((msg.reference.content||"(empty)").slice(0,80))+'</span></div>';
+/* ── message builder ──────────────────────────────── */
+function buildMsg(msg, isDM){
+  msgStore.set(msg.id,msg);
+  var el=document.createElement("div");el.className="msg-item"+(msg.notify?" notif":"");el.id="msg-"+msg.id;
+  var h="";
+  if(msg.reference){
+    h+='<div class="ref-bar" data-rid="'+msg.reference.id+'"><i class="ti ti-corner-up-left"></i>'
+      +'<span class="ref-author">'+esc(msg.reference.author)+'</span> '
+      +'<span class="ref-content">'+esc((msg.reference.content||"(empty)").slice(0,80))+"</span></div>";
   }
-  if (msg.is_reply_to_bot) h += '<div class="notif-bar"><i class="ti ti-bell-ringing"></i> Replied to the bot</div>';
-  else if (msg.mentions_bot) h += '<div class="notif-bar"><i class="ti ti-at"></i> Mentioned the bot</div>';
-  var badges = "";
-  if (msg.is_bot) badges += '<span class="badge b-bot">BOT</span>';
-  if (isDM) badges += '<span class="badge b-dm">DM</span>';
-  if (msg.is_reply_to_bot) badges += '<span class="badge b-reply">reply to bot</span>';
-  else if (msg.mentions_bot) badges += '<span class="badge b-mention">mentioned bot</span>';
-  h += '<div class="msg-body"><div class="msg-av" style="background:'+ac(msg.author)+'">'+ini(msg.author)+"</div>"
+  if(msg.is_reply_to_bot)h+='<div class="notif-bar"><i class="ti ti-bell-ringing"></i> Replied to the bot</div>';
+  else if(msg.mentions_bot)h+='<div class="notif-bar"><i class="ti ti-at"></i> Mentioned the bot</div>';
+  var badges="";
+  if(msg.is_bot)badges+='<span class="badge b-bot">BOT</span>';
+  if(msg.is_reply_to_bot)badges+='<span class="badge b-reply">reply to bot</span>';
+  else if(msg.mentions_bot)badges+='<span class="badge b-mention">mentioned bot</span>';
+  h+='<div class="msg-body"><div class="msg-av" style="background:'+ac(msg.author)+'">'+ini(msg.author)+"</div>"
     +'<div class="msg-right"><div class="msg-meta"><span class="msg-author">'+esc(msg.author)+'</span>'
     +'<span class="msg-time">'+fmt(msg.timestamp)+"</span>"+badges+"</div>"
-    +'<div class="msg-text">'+(esc(msg.content)||'<span style="opacity:.4">(no content)</span>')+"</div></div></div>";
-  if (!isDM) {
-    h += '<div class="msg-acts"><button class="act-btn"><i class="ti ti-corner-up-right"></i> Reply</button></div>';
-  }
-  el.innerHTML = h;
-  var rb = el.querySelector(".ref-bar");
-  if (rb) rb.addEventListener("click", function(e){e.stopPropagation();scrollToMsg(msg.reference.id);});
-  if (!isDM) {
-    var ab = el.querySelector(".act-btn");
-    if (ab) ab.addEventListener("click", function(e){e.stopPropagation();setReply(msg.id);});
-    el.addEventListener("click", function(){setReply(msg.id);});
-  }
+    +'<div class="msg-text">'+(esc(msg.content)||'<span style="opacity:.35">(no content)</span>')+"</div></div></div>"
+    +'<div class="msg-acts">';
+  if(!isDM) h+='<button class="act-btn reply-act"><i class="ti ti-corner-up-right"></i> Reply</button>';
+  if(msg.is_mine||msg.is_bot) h+='<button class="act-btn del del-act"><i class="ti ti-trash"></i> Delete</button>';
+  h+='</div>';
+  el.innerHTML=h;
+  var rb=el.querySelector(".ref-bar");
+  if(rb)rb.addEventListener("click",function(e){e.stopPropagation();scrollToMsg(msg.reference.id);});
+  var ab=el.querySelector(".reply-act");
+  if(ab)ab.addEventListener("click",function(e){e.stopPropagation();setReply(msg.id);});
+  var db=el.querySelector(".del-act");
+  if(db)db.addEventListener("click",function(e){e.stopPropagation();deleteMsg(msg.id, isDM);});
+  if(!isDM) el.addEventListener("click",function(){setReply(msg.id);});
   return el;
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   REPLY / SEND
-   ══════════════════════════════════════════════════════════════ */
-function setReply(msgId) {
-  var msg = msgStore.get(msgId); if (!msg) return; replyMsg = msg;
-  document.getElementById("replyAuthor").textContent = "@" + msg.author;
-  document.getElementById("replyPreview").textContent = (msg.content||"(empty)").slice(0,80);
-  document.getElementById("replyBar").style.display = "flex";
-  document.getElementById("msgInput").placeholder = "Reply to " + msg.author + "...";
-  document.getElementById("msgInput").focus();
-  var t = document.getElementById("msg-"+msgId);
-  if (t) { t.style.background = "rgba(88,101,242,.18)"; setTimeout(function(){t.style.background="";},800); }
-}
-function cancelReply() {
-  replyMsg = null;
-  document.getElementById("replyBar").style.display = "none";
-  if (curChan) document.getElementById("msgInput").placeholder = "Message #" + curChan + "...";
-  else if (curDmUserId) document.getElementById("msgInput").placeholder = "Send DM...";
-}
-
-function doSend() {
-  var input = document.getElementById("msgInput"), text = input.value.trim();
-  if (!text) return;
-  if (siteLocked) { showToast("Site is locked — messaging disabled", "err", "ti-lock"); return; }
-  var btn = document.getElementById("sendBtn"); btn.disabled = true;
-
-  var p;
-  // DM send
-  if (curDmUserId) {
-    p = fetch("/dms/send", {method:"POST", headers:{"Content-Type":"application/json"},
-        body: JSON.stringify({user_id: curDmUserId, message: text})});
-  }
-  // Reply
-  else if (replyMsg) {
-    p = fetch("/reply", {method:"POST", headers:{"Content-Type":"application/json"},
-        body: JSON.stringify({channel_id: curChanId, message_id: replyMsg.id, content: text, bot_id: activeBotId})});
-  }
-  // Normal send
-  else {
-    p = fetch("/send", {method:"POST", headers:{"Content-Type":"application/json"},
-        body: JSON.stringify({channel_id: curChanId, message: text, bot_id: activeBotId})});
-  }
-  p.then(function(r){return r.json();})
-   .then(function(d) {
-     if (d.success) { input.value = ""; cancelReply(); showToast("Sent!", "ok", "ti-check"); }
-     else showToast(d.error || "Failed", "err", "ti-alert-circle");
-   }).catch(function(){showToast("Network error","err","ti-wifi-off");})
-   .finally(function(){btn.disabled=false;});
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   CUSTOM BOTS
-   ══════════════════════════════════════════════════════════════ */
-function toggleAddBot() {
-  var f = document.getElementById("addBotForm"), btn = document.getElementById("addBotToggle");
-  var show = f.style.display !== "flex";
-  f.style.display = show ? "flex" : "none";
-  btn.innerHTML = show ? '<i class="ti ti-x"></i>' : '<i class="ti ti-plus"></i>';
-  if (show) document.getElementById("newBotToken").focus();
-}
-function addBot() {
-  var token = document.getElementById("newBotToken").value.trim();
-  var name  = document.getElementById("newBotName").value.trim() || "Custom Bot";
-  if (!token) { showToast("Enter a bot token","err","ti-alert-circle"); return; }
-  var btn = document.getElementById("connectBotBtn"); btn.disabled=true;
-  btn.innerHTML='<i class="ti ti-loader spinning"></i> Verifying...';
-  fetch("/bots",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({token,name})})
+/* ── delete message ───────────────────────────────── */
+function deleteMsg(msgId, isDM){
+  var msg=msgStore.get(msgId);if(!msg)return;
+  var el=document.getElementById("msg-"+msgId);
+  var url=isDM
+    ?"/dm/"+curDmUserId+"/message/"+msgId
+    :"/message/"+curChanId+"/"+msgId;
+  fetch(url,{method:"DELETE"})
     .then(function(r){return r.json();})
     .then(function(d){
-      if (d.success) {
+      if(d.success){if(el)el.remove();msgStore.delete(msgId);showToast("Message deleted","ok","ti-check");}
+      else showToast(d.error||"Can't delete","err","ti-alert-circle");
+    }).catch(function(){showToast("Network error","err","ti-wifi-off");});
+}
+
+/* ── members & DMs ────────────────────────────────── */
+var curDmUserId=null, dmEvtSrc=null, dmMsgStore=new Map();
+
+function loadMembers(guildId){
+  var list=document.getElementById("memberList");
+  list.innerHTML='<div style="padding:8px 12px;font-size:12px;color:var(--mut)"><i class="ti ti-loader spinning"></i> Loading…</div>';
+  fetch("/members/"+guildId).then(function(r){return r.json();}).then(function(members){
+    list.innerHTML="";
+    if(!members||members.error||!members.length){
+      list.innerHTML='<div style="padding:8px 12px;font-size:12px;color:var(--mut);font-style:italic">No members found</div>';return;
+    }
+    var online=members.filter(function(m){return m.status==="online";});
+    var idle=members.filter(function(m){return m.status==="idle"||m.status==="dnd";});
+    var offline=members.filter(function(m){return m.status==="offline";});
+    var cnt=document.getElementById("memberCount");
+    cnt.textContent="("+online.length+" online, "+offline.length+" offline)";
+    function renderGroup(label, group){
+      if(!group.length)return;
+      var hdr=document.createElement("div");hdr.className="status-section-hdr";hdr.textContent=label+" — "+group.length;list.appendChild(hdr);
+      group.forEach(function(m){list.appendChild(buildMemberItem(m));});
+    }
+    renderGroup("Online", online);
+    renderGroup("Idle / DND", idle);
+    renderGroup("Offline", offline);
+  }).catch(function(){
+    list.innerHTML='<div style="padding:8px 12px;font-size:12px;color:var(--mut)">Failed to load members</div>';
+  });
+}
+
+function buildMemberItem(m){
+  var el=document.createElement("div");el.className="member-item";
+  var avatarHtml=m.avatar_url
+    ?'<img src="'+m.avatar_url+'" alt="" onerror="this.style.display=\'none\';this.parentNode.textContent=\''+ini(m.name)+'\'">'
+    :ini(m.name);
+  el.innerHTML='<div class="member-av-wrap">'
+    +'<div class="member-av" style="background:'+ac(m.name)+'">'+avatarHtml+'</div>'
+    +'<div class="status-dot '+m.status+'"></div>'
+    +'</div>'
+    +'<div class="member-info">'
+    +'<div class="member-name">'+esc(m.name)+'</div>'
+    +'<div class="member-status-txt">'+esc(m.status)+'</div>'
+    +'</div>'
+    +'<i class="ti ti-message" style="color:var(--mut);font-size:14px"></i>';
+  el.onclick=function(){openDM(m);};
+  return el;
+}
+
+function openDM(m){
+  curDmUserId=m.id;
+  dmMsgStore.clear();
+  // Update DM header
+  var av=document.getElementById("dmAvatar");
+  if(m.avatar_url){av.innerHTML='<img src="'+m.avatar_url+'" alt="" onerror="this.innerHTML=\''+ini(m.name)+'\'">';av.style.background=ac(m.name);}
+  else{av.textContent=ini(m.name);av.style.background=ac(m.name);}
+  document.getElementById("dmUserName").textContent=m.name+(m.discriminator&&m.discriminator!=="0"?"#"+m.discriminator:"");
+  document.getElementById("dmUserStatus").textContent=m.status.charAt(0).toUpperCase()+m.status.slice(1);
+  document.getElementById("dmView").classList.add("open");
+  document.getElementById("dmInput").placeholder="Message "+m.name+"...";
+  loadDMHistory(m.id);
+  connectDMSSE(m.id);
+  setTimeout(function(){document.getElementById("dmInput").focus();},100);
+}
+
+function closeDM(){
+  document.getElementById("dmView").classList.remove("open");
+  if(dmEvtSrc){dmEvtSrc.close();dmEvtSrc=null;}
+  curDmUserId=null;
+}
+
+function loadDMHistory(userId){
+  var log=document.getElementById("dmMsgLog");
+  log.innerHTML='<div class="log-state"><i class="ti ti-loader spinning"></i><div>Loading…</div></div>';
+  dmMsgStore.clear();
+  fetch("/dm/"+userId).then(function(r){return r.json();}).then(function(msgs){
+    log.innerHTML="";
+    if(msgs.error){log.innerHTML='<div class="log-state"><i class="ti ti-lock"></i><div>'+esc(msgs.error)+"</div></div>";return;}
+    if(!msgs.length){log.innerHTML='<div class="log-state"><i class="ti ti-message-off"></i><div>No messages yet<br><span style="font-size:12px;color:var(--mut)">Send the first message!</span></div></div>';return;}
+    msgs.forEach(function(m){
+      dmMsgStore.set(m.id,m);
+      log.appendChild(buildMsg(m,true));
+    });
+    log.scrollTop=log.scrollHeight;
+  }).catch(function(){log.innerHTML='<div class="log-state"><i class="ti ti-wifi-off"></i><div>Failed to load</div></div>';});
+}
+
+function connectDMSSE(userId){
+  if(dmEvtSrc){dmEvtSrc.close();}
+  dmEvtSrc=new EventSource("/dm-events/"+userId);
+  dmEvtSrc.onmessage=function(e){
+    try{
+      var msg=JSON.parse(e.data);
+      if(msg.type==="ping")return;
+      var log=document.getElementById("dmMsgLog"),ph=log.querySelector(".log-state");if(ph)ph.remove();
+      dmMsgStore.set(msg.id,msg);
+      msgStore.set(msg.id,msg);
+      log.appendChild(buildMsg(msg,true));log.scrollTop=log.scrollHeight;
+      if(!msg.is_mine)showToast(msg.author+" sent you a DM","info","ti-message");
+    }catch(err){}
+  };
+}
+
+function doDmSend(){
+  if(!curDmUserId)return;
+  var input=document.getElementById("dmInput"),text=input.value.trim();
+  if(!text)return;
+  var btn=document.getElementById("dmSendBtn");btn.disabled=true;
+  fetch("/dm/"+curDmUserId,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message:text})})
+    .then(function(r){return r.json();})
+    .then(function(d){
+      if(d.success||d.id){
+        input.value="";input.style.height="";
+        var log=document.getElementById("dmMsgLog"),ph=log.querySelector(".log-state");if(ph)ph.remove();
+        dmMsgStore.set(d.id,d);msgStore.set(d.id,d);
+        log.appendChild(buildMsg(d,true));log.scrollTop=log.scrollHeight;
+      } else showToast(d.error||"Failed to send","err","ti-alert-circle");
+    }).catch(function(){showToast("Network error","err","ti-wifi-off");})
+    .finally(function(){btn.disabled=false;});
+}
+
+document.getElementById("dmInput").addEventListener("keydown",function(e){
+  if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();doDmSend();}
+});
+document.getElementById("dmInput").addEventListener("input",function(){
+  this.style.height="auto";this.style.height=Math.min(this.scrollHeight,120)+"px";
+});
+
+/* ── reply ────────────────────────────────────────── */
+function setReply(msgId){
+  var msg=msgStore.get(msgId);if(!msg)return;replyMsg=msg;
+  document.getElementById("replyAuthor").textContent="@"+msg.author;
+  document.getElementById("replyPreview").textContent=(msg.content||"(empty)").slice(0,80);
+  document.getElementById("replyBar").style.display="flex";
+  document.getElementById("msgInput").placeholder="Reply to "+msg.author+"...";
+  document.getElementById("msgInput").focus();
+  var t=document.getElementById("msg-"+msgId);
+  if(t){t.style.background="rgba(192,57,43,.2)";setTimeout(function(){t.style.background=""},900);}
+}
+function cancelReply(){
+  replyMsg=null;document.getElementById("replyBar").style.display="none";
+  if(curChan)document.getElementById("msgInput").placeholder="Message #"+curChan+"...";
+}
+
+/* ── send ─────────────────────────────────────────── */
+function doSend(){
+  var input=document.getElementById("msgInput"),text=input.value.trim();
+  if(!text||!curChanId)return;
+  var btn=document.getElementById("sendBtn");btn.disabled=true;
+  var ep=replyMsg?"/reply":"/send";
+  var body=replyMsg
+    ?{channel_id:curChanId,message_id:replyMsg.id,content:text,bot_id:activeBotId}
+    :{channel_id:curChanId,message:text,bot_id:activeBotId};
+  fetch(ep,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)})
+    .then(function(r){return r.json();})
+    .then(function(d){
+      if(d.success){input.value="";input.style.height="";cancelReply();showToast("Sent!","ok","ti-check");}
+      else showToast(d.error||"Failed","err","ti-alert-circle");
+    }).catch(function(){showToast("Network error","err","ti-wifi-off");})
+    .finally(function(){btn.disabled=false;});
+}
+
+/* ── custom bots ──────────────────────────────────── */
+function toggleAddBot(){
+  var f=document.getElementById("addBotForm"),btn=document.getElementById("addBotToggle");
+  var show=f.style.display!=="flex";f.style.display=show?"flex":"none";
+  btn.innerHTML=show?'<i class="ti ti-x"></i>':'<i class="ti ti-plus"></i>';
+  if(show)document.getElementById("newBotToken").focus();
+}
+function addBot(){
+  var token=document.getElementById("newBotToken").value.trim();
+  var name=document.getElementById("newBotName").value.trim()||"Custom Bot";
+  if(!token){showToast("Enter a bot token","err","ti-alert-circle");return;}
+  var btn=document.getElementById("connectBotBtn");btn.disabled=true;
+  btn.innerHTML='<i class="ti ti-loader spinning"></i> Verifying...';
+  fetch("/bots",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({token:token,name:name})})
+    .then(function(r){return r.json();})
+    .then(function(d){
+      if(d.success){
         document.getElementById("newBotToken").value="";document.getElementById("newBotName").value="";
         toggleAddBot();loadBots();showToast("Connected: "+d.username,"ok","ti-robot");
       } else showToast(d.error||"Invalid token","err","ti-alert-circle");
     }).catch(function(){showToast("Network error","err","ti-wifi-off");})
     .finally(function(){btn.disabled=false;btn.innerHTML='<i class="ti ti-plug-connected"></i> Connect';});
 }
-function deleteBot(id) {
+function deleteBot(id){
   fetch("/bots/"+id,{method:"DELETE"}).then(function(){
-    if (activeBotId===id){activeBotId="main";refreshBotPills();}
+    if(activeBotId===id){activeBotId="main";refreshBotPills();}
     loadBots();showToast("Bot removed","ok","ti-check");
   });
 }
-function loadBots() {
+function loadBots(){
   fetch("/bots").then(function(r){return r.json();}).then(function(bots){
     customBots={};var list=document.getElementById("botList");list.innerHTML="";
     bots.forEach(function(b){
       customBots[b.id]=b;
       var el=document.createElement("div");el.className="bot-item";
-      el.innerHTML='<div class="av" style="background:'+ac(b.name)+'">'+ini(b.name)+'</div>'
-        +'<span class="item-name">'+esc(b.name)+'</span>'
+      el.innerHTML='<div class="av" style="background:'+ac(b.name)+'">'+ini(b.name)+"</div>"
+        +'<span class="item-name">'+esc(b.name)+"</span>"
         +'<button class="del-btn" title="Remove" onclick="event.stopPropagation();deleteBot(\''+b.id+'\')"><i class="ti ti-trash"></i></button>';
       list.appendChild(el);
     });
     refreshBotPills();
   });
 }
-function refreshBotPills() {
+if(SESSION_TOKEN){loadBots();}
+function refreshBotPills(){
   var sel=document.getElementById("botSelector"),opts=document.getElementById("botOptions");
   opts.innerHTML="";
   var mn=document.getElementById("statusText").textContent||"Main Bot";
   var mp=document.createElement("div");mp.className="bot-pill"+(activeBotId==="main"?" active":"");mp.dataset.id="main";
-  mp.innerHTML='<div class="mini-av" style="background:#5865f2">'+ini(mn)+'</div><span>'+esc(mn)+'</span>';
+  mp.innerHTML='<div class="mini-av" style="background:#c0392b">'+ini(mn)+"</div><span>"+esc(mn)+"</span>";
   mp.onclick=function(){selectBot("main");};opts.appendChild(mp);
   Object.keys(customBots).forEach(function(id){
     var b=customBots[id],pill=document.createElement("div");
     pill.className="bot-pill"+(activeBotId===id?" active":"");pill.dataset.id=id;
-    pill.innerHTML='<div class="mini-av" style="background:'+ac(b.name)+'">'+ini(b.name)+'</div><span>'+esc(b.name)+'</span>';
+    pill.innerHTML='<div class="mini-av" style="background:'+ac(b.name)+'">'+ini(b.name)+"</div><span>"+esc(b.name)+"</span>";
     pill.onclick=function(){selectBot(id);};opts.appendChild(pill);
   });
   sel.style.display=Object.keys(customBots).length>0?"block":"none";
@@ -888,138 +880,14 @@ function selectBot(id){
   var a=document.querySelector('.bot-pill[data-id="'+id+'"]');if(a)a.classList.add("active");
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   ADMIN PANEL
-   ══════════════════════════════════════════════════════════════ */
-function checkAdminSession() {
-  // Restore auto-admin from sessionStorage if present
-  if (ADMIN_USER_ID === "__auto__") {
-    showAdminBtn();
-    return;
-  }
-  if (!ADMIN_USER_ID) return;
-  fetch("/admin/check").then(function(r){return r.json();}).then(function(d){
-    if (d.admin) showAdminBtn();
-    else { ADMIN_USER_ID=""; sessionStorage.removeItem("admin_uid"); }
-  }).catch(function(){});
+/* ── misc ─────────────────────────────────────────── */
+function scrollToMsg(id){
+  var el=document.getElementById("msg-"+id);
+  if(el){el.scrollIntoView({behavior:"smooth",block:"center"});el.style.background="rgba(192,57,43,.25)";setTimeout(function(){el.style.background=""},1200);}
 }
-
-function connectAdminSSE() {
-  if (adminEvtSrc) adminEvtSrc.close();
-  adminEvtSrc = new EventSource("/admin/events");
-  adminEvtSrc.onmessage = function(e) {
-    try {
-      var d = JSON.parse(e.data);
-      if (d.type === "lockdown") {
-        applyLockdown(d.locked);
-      } else if (d.type === "admin_unlock") {
-        // If the message came from this page's user (match by session), show button
-        // We store the user_id temporarily in sessionStorage for cross-check
-        var myUid = sessionStorage.getItem("pending_admin_uid");
-        if (myUid && myUid === d.user_id) {
-          ADMIN_USER_ID = d.user_id;
-          sessionStorage.setItem("admin_uid", d.user_id);
-          sessionStorage.removeItem("pending_admin_uid");
-          showAdminBtn();
-          showToast("Admin panel unlocked!", "ok", "ti-shield-lock");
-        }
-      }
-    } catch(err) {}
-  };
+function jumpToNotif(){
+  if(lastNotifId){scrollToMsg(lastNotifId);notifCount=0;document.getElementById("notifBadge").style.display="none";}
 }
-
-function showAdminBtn() {
-  var btn = document.getElementById("adminBtn");
-  btn.style.display = "flex";
-}
-
-function openAdminPanel() {
-  fetch("/admin/status").then(function(r){return r.json();}).then(function(d){
-    updateLockUI(d.locked);
-    document.getElementById("adminModal").classList.add("show");
-  });
-}
-function closeAdminPanel() {
-  document.getElementById("adminModal").classList.remove("show");
-}
-
-function adminLock() {
-  fetch("/admin/lock",{method:"POST"}).then(function(r){return r.json();}).then(function(d){
-    if (d.success) showToast("Site locked!","warn","ti-lock");
-    else showToast(d.error||"Failed","err","ti-alert-circle");
-  });
-}
-function adminUnlock() {
-  fetch("/admin/unlock",{method:"POST"}).then(function(r){return r.json();}).then(function(d){
-    if (d.success) showToast("Site unlocked!","ok","ti-lock-open");
-    else showToast(d.error||"Failed","err","ti-alert-circle");
-  });
-}
-
-function fetchLockStatus() {
-  fetch("/admin/status").then(function(r){return r.json();}).then(function(d){
-    applyLockdown(d.locked);
-  }).catch(function(){});
-}
-
-function applyLockdown(locked) {
-  siteLocked = locked;
-  var banner = document.getElementById("lockBanner");
-  var lockMsg = document.getElementById("composerLockMsg");
-  if (locked) {
-    banner.classList.add("show");
-    document.getElementById("composer").style.display = "none";
-    lockMsg.classList.add("show");
-  } else {
-    banner.classList.remove("show");
-    if (curChanId || curDmUserId) {
-      document.getElementById("composer").style.display = "block";
-    }
-    lockMsg.classList.remove("show");
-  }
-  updateLockUI(locked);
-}
-
-function updateLockUI(locked) {
-  var ind = document.getElementById("lockInd");
-  var txt = document.getElementById("lockStatusText");
-  if (!ind) return;
-  ind.style.background = locked ? "var(--red)" : "var(--green)";
-  txt.textContent = locked ? "Site is currently LOCKED" : "Site is currently unlocked";
-}
-
-function showUseless() {
-  document.getElementById("adminModal").classList.remove("show");
-  document.getElementById("uselessModal").classList.add("show");
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   MISC
-   ══════════════════════════════════════════════════════════════ */
-function scrollToMsg(id) {
-  var el = document.getElementById("msg-"+id);
-  if (el) {
-    el.scrollIntoView({behavior:"smooth",block:"center"});
-    el.style.background="rgba(88,101,242,.22)";
-    setTimeout(function(){el.style.background="";},1200);
-  }
-}
-function jumpToNotif() {
-  if (lastNotifId) {
-    scrollToMsg(lastNotifId);
-    notifCount=0;
-    document.getElementById("notifBadge").style.display="none";
-  }
-}
-var _tt=null;
-function showToast(msg,type,icon) {
-  var t=document.getElementById("toast");
-  t.className="show "+(type||"ok");
-  t.innerHTML='<i class="ti '+(icon||"ti-check")+'" style="font-size:15px"></i> '+esc(msg);
-  if(_tt)clearTimeout(_tt);
-  _tt=setTimeout(function(){t.className="";},3200);
-}
-
 document.getElementById("msgInput").addEventListener("keydown",function(e){
   if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();doSend();}
   if(e.key==="Escape")cancelReply();
