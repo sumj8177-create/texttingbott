@@ -10,10 +10,10 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#170d0d;--sb:#1f1010;--panel:#261414;--surf:#2e1919;--bord:#3d2222;
-  --acc:#c0392b;--acc2:#e05a4a;--adim:rgba(192,57,43,.15);
-  --green:#2ecc71;--red:#e74c3c;--yel:#f39c12;--pink:#e91e8c;
-  --txt:#f0e6e6;--sub:#b89090;--mut:#6b4040;
+  --bg:#0b0d14;--sb:#10121a;--panel:#161820;--surf:#1c1f2e;--bord:#252840;
+  --acc:#5865f2;--acc2:#7983f5;--adim:rgba(88,101,242,.13);
+  --green:#3ba55c;--red:#ed4245;--yel:#faa61a;--pink:#eb459e;
+  --txt:#e3e5f0;--sub:#9ca3c0;--mut:#555878;
   --r:8px;--r-lg:12px;
 }
 html,body{height:100%;background:var(--bg);color:var(--txt)}
@@ -106,7 +106,7 @@ main{flex:1;display:flex;flex-direction:column;overflow:hidden}
 .chip{padding:4px 12px;border-radius:20px;border:1px solid var(--bord);font-size:12px;
       font-family:"JetBrains Mono",monospace;color:var(--sub);cursor:pointer;
       white-space:nowrap;flex-shrink:0;transition:all .15s}
-.chip:hover{border-color:rgba(192,57,43,.5);color:var(--txt)}
+.chip:hover{border-color:rgba(88,101,242,.5);color:var(--txt)}
 .chip.active{background:var(--adim);border-color:var(--acc);color:var(--acc2)}
 #msgLog{flex:1;overflow-y:auto;padding:14px 18px;display:flex;flex-direction:column;gap:1px}
 .log-state{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
@@ -137,7 +137,7 @@ main{flex:1;display:flex;flex-direction:column;overflow:hidden}
 .msg-time{font-size:11px;color:var(--mut);font-family:"JetBrains Mono",monospace}
 .msg-text{font-size:14px;color:var(--txt);line-height:1.6;word-break:break-word;white-space:pre-wrap}
 .badge{font-size:10px;font-weight:700;padding:1px 6px;border-radius:4px;letter-spacing:.05em;text-transform:uppercase}
-.b-bot{background:rgba(192,57,43,.2);color:var(--acc2)}
+.b-bot{background:rgba(88,101,242,.2);color:var(--acc2)}
 .b-reply{background:rgba(250,166,26,.18);color:var(--yel)}
 .b-mention{background:rgba(237,66,69,.15);color:#ed8587}
 .msg-acts{position:absolute;top:5px;right:8px;opacity:0;transition:opacity .15s;display:flex;gap:4px}
@@ -145,57 +145,6 @@ main{flex:1;display:flex;flex-direction:column;overflow:hidden}
          border:1px solid var(--bord);border-radius:var(--r);color:var(--sub);
          cursor:pointer;font-size:12px;font-family:Inter,sans-serif;font-weight:500;transition:all .12s}
 .act-btn:hover{background:var(--acc);border-color:var(--acc);color:#fff}
-.act-btn.del:hover{background:var(--red);border-color:var(--red);color:#fff}
-
-/* ── members / DMs panel ── */
-.member-item{display:flex;align-items:center;gap:9px;padding:7px 9px;border-radius:var(--r);
-             cursor:pointer;font-size:13px;font-weight:500;color:var(--sub);
-             border:1px solid transparent;margin-bottom:2px;transition:all .15s;position:relative}
-.member-item:hover{background:var(--surf);color:var(--txt)}
-.member-av-wrap{position:relative;flex-shrink:0}
-.member-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;
-           justify-content:center;font-size:11px;font-weight:700;color:#fff;overflow:hidden}
-.member-av img{width:100%;height:100%;object-fit:cover;border-radius:50%}
-.status-dot{position:absolute;bottom:-1px;right:-1px;width:10px;height:10px;border-radius:50%;
-            border:2px solid var(--sb);flex-shrink:0}
-.status-dot.online{background:var(--green)}
-.status-dot.idle{background:var(--yel)}
-.status-dot.dnd{background:var(--red)}
-.status-dot.offline{background:var(--mut)}
-.member-info{flex:1;min-width:0}
-.member-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;color:var(--txt)}
-.member-status-txt{font-size:11px;color:var(--mut);text-transform:capitalize}
-.aside-section{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
-               color:var(--mut);padding:8px 16px 4px;margin-top:4px}
-
-/* ── DM view overlay ── */
-#dmView{position:absolute;inset:0;background:var(--bg);z-index:100;display:none;flex-direction:column}
-#dmView.open{display:flex}
-#dmHeader{display:flex;align-items:center;gap:12px;padding:0 18px;height:52px;
-          background:var(--sb);border-bottom:1px solid var(--bord);flex-shrink:0}
-#dmBackBtn{display:flex;align-items:center;gap:6px;padding:6px 12px;background:none;
-           border:1px solid var(--bord);border-radius:var(--r);color:var(--sub);
-           cursor:pointer;font-size:13px;font-weight:500;font-family:Inter,sans-serif;transition:all .15s}
-#dmBackBtn:hover{border-color:var(--acc);color:var(--txt);background:var(--adim)}
-#dmUserInfo{display:flex;align-items:center;gap:10px;flex:1}
-.dm-av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;
-       font-size:12px;font-weight:700;color:#fff;overflow:hidden;flex-shrink:0}
-.dm-av img{width:100%;height:100%;object-fit:cover;border-radius:50%}
-#dmUserName{font-size:15px;font-weight:700;color:var(--txt)}
-#dmUserStatus{font-size:12px;color:var(--sub);margin-top:1px}
-#dmMsgLog{flex:1;overflow-y:auto;padding:14px 18px;display:flex;flex-direction:column;gap:1px}
-#dmComposer{padding:12px 18px 14px;background:var(--panel);border-top:1px solid var(--bord);flex-shrink:0}
-.dm-comp-inner{display:flex;gap:9px;align-items:flex-end;background:var(--surf);
-               border:1px solid var(--bord);border-radius:var(--r-lg);padding:9px 13px;transition:border-color .15s}
-.dm-comp-inner:focus-within{border-color:var(--acc)}
-#dmInput{flex:1;background:transparent;border:none;outline:none;resize:none;
-         font-family:Inter,system-ui,sans-serif;font-size:14px;color:var(--txt);
-         min-height:36px;max-height:120px;caret-color:var(--acc);line-height:1.5}
-#dmInput::placeholder{color:var(--mut)}
-
-/* ── member status section dividers ── */
-.status-section-hdr{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
-                    color:var(--mut);padding:6px 12px 2px;margin-top:4px}
 
 /* ── reply bar ── */
 #replyBar{display:none;align-items:center;gap:8px;padding:8px 18px;
@@ -216,7 +165,7 @@ main{flex:1;display:flex;flex-direction:column;overflow:hidden}
 .bot-pill{display:flex;align-items:center;gap:5px;padding:3px 10px 3px 6px;border-radius:20px;
           border:1px solid var(--bord);cursor:pointer;font-size:12px;color:var(--sub);
           font-weight:500;transition:all .15s}
-.bot-pill:hover{border-color:rgba(192,57,43,.5);color:var(--txt)}
+.bot-pill:hover{border-color:rgba(88,101,242,.5);color:var(--txt)}
 .bot-pill.active{border-color:var(--acc);background:var(--adim);color:var(--acc2)}
 .mini-av{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;
          justify-content:center;font-size:9px;font-weight:700;color:#fff;flex-shrink:0}
@@ -243,7 +192,7 @@ textarea::placeholder{color:var(--mut)}
 #toast.ok{background:#122a1e;border:1px solid var(--green);color:#6be09a}
 #toast.warn{background:#342c10;border:1px solid var(--yel);color:var(--yel)}
 #toast.err{background:#2e1213;border:1px solid var(--red);color:#ed8587}
-#toast.info{background:#2a1010;border:1px solid var(--acc);color:var(--acc2)}
+#toast.info{background:#131a3a;border:1px solid var(--acc);color:var(--acc2)}
 @keyframes spin{to{transform:rotate(360deg)}}
 .spinning{animation:spin 1s linear infinite;display:inline-block}
 
@@ -336,7 +285,7 @@ textarea::placeholder{color:var(--mut)}
   <div class="logo"><i class="ti ti-bolt"></i></div>
   <h1>Bot Dashboard</h1>
   <div class="hdr-right">
-    <a class="policy-link" href="/policy" target="_blank"><i class="ti ti-shield-check"></i> No Logging Policy</a>
+    <a class="policy-link" href="/policy" target="_blank"><i class="ti ti-history"></i> Update Log</a>
     <div class="notif-wrap" onclick="jumpToNotif()" title="Jump to latest mention">
       <i class="ti ti-bell"></i><span id="notifBadge"></span>
     </div>
@@ -348,38 +297,10 @@ textarea::placeholder{color:var(--mut)}
 </div>
 
 <!-- Workspace -->
-<div id="ws" style="position:relative">
-  <!-- DM View Overlay -->
-  <div id="dmView">
-    <div id="dmHeader">
-      <button id="dmBackBtn" onclick="closeDM()"><i class="ti ti-arrow-left"></i> Back</button>
-      <div id="dmUserInfo">
-        <div class="dm-av" id="dmAvatar"></div>
-        <div>
-          <div id="dmUserName">—</div>
-          <div id="dmUserStatus">—</div>
-        </div>
-      </div>
-    </div>
-    <div id="dmMsgLog"><div class="log-state"><i class="ti ti-loader spinning"></i><div>Loading…</div></div></div>
-    <div id="dmComposer">
-      <div class="dm-comp-inner">
-        <textarea id="dmInput" placeholder="Send a DM…" rows="1"></textarea>
-        <button class="send-btn" id="dmSendBtn" onclick="doDmSend()"><i class="ti ti-send"></i> Send</button>
-      </div>
-      <div class="comp-hint">Enter to send · Shift+Enter for new line</div>
-    </div>
-  </div>
+<div id="ws">
   <aside>
     <div class="aside-head">Servers</div>
     <div class="scroll-list" id="srvList" style="flex:1;padding-bottom:4px"></div>
-    <hr class="aside-div">
-    <div class="aside-head">Members
-      <span id="memberCount" style="font-size:10px;color:var(--mut);margin-left:4px;font-weight:400;text-transform:none;letter-spacing:0"></span>
-    </div>
-    <div class="scroll-list" id="memberList" style="max-height:220px;padding-bottom:4px">
-      <div style="padding:8px 12px;font-size:12px;color:var(--mut);font-style:italic">Select a server to see members</div>
-    </div>
     <hr class="aside-div">
     <div class="aside-head">Custom Bots
       <button class="add-btn" id="addBotToggle" onclick="toggleAddBot()" title="Add bot"><i class="ti ti-plus"></i></button>
@@ -422,7 +343,7 @@ textarea::placeholder{color:var(--mut)}
 
 <script>
 /* ── helpers ──────────────────────────────────────── */
-var AV=['#c0392b','#922b21','#e05a4a','#8e1a1a','#d35400','#a93226','#7b241c','#cb4335'];
+var AV=['#5865f2','#3ba55c','#eb459e','#ed4245','#faa61a','#00b0f4','#9b59b6','#e67e22'];
 function ac(n){var h=0;for(var i=0;i<n.length;i++)h=((h<<5)-h+n.charCodeAt(i))|0;return AV[Math.abs(h)%AV.length]}
 function ini(n){return(n||"?").split(/\s+/).map(function(w){return w[0]||""}).join("").slice(0,2).toUpperCase()||"?"}
 function esc(t){return(t||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
@@ -558,7 +479,6 @@ function pickServer(g,el){
     });
   });
   document.getElementById("msgLog").innerHTML='<div class="log-state"><i class="ti ti-hash"></i><div>Pick a channel</div></div>';
-  loadMembers(g.id);
 }
 
 function pickChannel(c,chip){
@@ -580,7 +500,7 @@ function loadHistory(cid){
     log.innerHTML="";
     if(msgs.error){log.innerHTML='<div class="log-state"><i class="ti ti-lock"></i><div>'+esc(msgs.error)+"</div></div>";return;}
     if(!msgs.length){log.innerHTML='<div class="log-state"><i class="ti ti-message-off"></i><div>No messages yet</div></div>';return;}
-    msgs.forEach(function(m){log.appendChild(buildMsg(m,false));});log.scrollTop=log.scrollHeight;
+    msgs.forEach(function(m){log.appendChild(buildMsg(m));});log.scrollTop=log.scrollHeight;
   }).catch(function(){log.innerHTML='<div class="log-state"><i class="ti ti-wifi-off"></i><div>Failed to load</div></div>';});
 }
 
@@ -593,7 +513,7 @@ function connectSSE(cid){
       if(msg.type==="ping")return;
       if(msg.type==="shutdown"){showNukeOverlay();return;}
       var log=document.getElementById("msgLog"),ph=log.querySelector(".log-state");if(ph)ph.remove();
-      log.appendChild(buildMsg(msg,false));log.scrollTop=log.scrollHeight;
+      log.appendChild(buildMsg(msg));log.scrollTop=log.scrollHeight;
       if(msg.notify){
         notifCount++;lastNotifId=msg.id;
         document.getElementById("notifBadge").textContent=notifCount;
@@ -606,7 +526,7 @@ function connectSSE(cid){
 }
 
 /* ── message builder ──────────────────────────────── */
-function buildMsg(msg, isDM){
+function buildMsg(msg){
   msgStore.set(msg.id,msg);
   var el=document.createElement("div");el.className="msg-item"+(msg.notify?" notif":"");el.id="msg-"+msg.id;
   var h="";
@@ -625,161 +545,15 @@ function buildMsg(msg, isDM){
     +'<div class="msg-right"><div class="msg-meta"><span class="msg-author">'+esc(msg.author)+'</span>'
     +'<span class="msg-time">'+fmt(msg.timestamp)+"</span>"+badges+"</div>"
     +'<div class="msg-text">'+(esc(msg.content)||'<span style="opacity:.35">(no content)</span>')+"</div></div></div>"
-    +'<div class="msg-acts">';
-  if(!isDM) h+='<button class="act-btn reply-act"><i class="ti ti-corner-up-right"></i> Reply</button>';
-  if(msg.is_mine||msg.is_bot) h+='<button class="act-btn del del-act"><i class="ti ti-trash"></i> Delete</button>';
-  h+='</div>';
+    +'<div class="msg-acts"><button class="act-btn"><i class="ti ti-corner-up-right"></i> Reply</button></div>';
   el.innerHTML=h;
   var rb=el.querySelector(".ref-bar");
   if(rb)rb.addEventListener("click",function(e){e.stopPropagation();scrollToMsg(msg.reference.id);});
-  var ab=el.querySelector(".reply-act");
+  var ab=el.querySelector(".act-btn");
   if(ab)ab.addEventListener("click",function(e){e.stopPropagation();setReply(msg.id);});
-  var db=el.querySelector(".del-act");
-  if(db)db.addEventListener("click",function(e){e.stopPropagation();deleteMsg(msg.id, isDM);});
-  if(!isDM) el.addEventListener("click",function(){setReply(msg.id);});
+  el.addEventListener("click",function(){setReply(msg.id);});
   return el;
 }
-
-/* ── delete message ───────────────────────────────── */
-function deleteMsg(msgId, isDM){
-  var msg=msgStore.get(msgId);if(!msg)return;
-  var el=document.getElementById("msg-"+msgId);
-  var url=isDM
-    ?"/dm/"+curDmUserId+"/message/"+msgId
-    :"/message/"+curChanId+"/"+msgId;
-  fetch(url,{method:"DELETE"})
-    .then(function(r){return r.json();})
-    .then(function(d){
-      if(d.success){if(el)el.remove();msgStore.delete(msgId);showToast("Message deleted","ok","ti-check");}
-      else showToast(d.error||"Can't delete","err","ti-alert-circle");
-    }).catch(function(){showToast("Network error","err","ti-wifi-off");});
-}
-
-/* ── members & DMs ────────────────────────────────── */
-var curDmUserId=null, dmEvtSrc=null, dmMsgStore=new Map();
-
-function loadMembers(guildId){
-  var list=document.getElementById("memberList");
-  list.innerHTML='<div style="padding:8px 12px;font-size:12px;color:var(--mut)"><i class="ti ti-loader spinning"></i> Loading…</div>';
-  fetch("/members/"+guildId).then(function(r){return r.json();}).then(function(members){
-    list.innerHTML="";
-    if(!members||members.error||!members.length){
-      list.innerHTML='<div style="padding:8px 12px;font-size:12px;color:var(--mut);font-style:italic">No members found</div>';return;
-    }
-    var online=members.filter(function(m){return m.status==="online";});
-    var idle=members.filter(function(m){return m.status==="idle"||m.status==="dnd";});
-    var offline=members.filter(function(m){return m.status==="offline";});
-    var cnt=document.getElementById("memberCount");
-    cnt.textContent="("+online.length+" online, "+offline.length+" offline)";
-    function renderGroup(label, group){
-      if(!group.length)return;
-      var hdr=document.createElement("div");hdr.className="status-section-hdr";hdr.textContent=label+" — "+group.length;list.appendChild(hdr);
-      group.forEach(function(m){list.appendChild(buildMemberItem(m));});
-    }
-    renderGroup("Online", online);
-    renderGroup("Idle / DND", idle);
-    renderGroup("Offline", offline);
-  }).catch(function(){
-    list.innerHTML='<div style="padding:8px 12px;font-size:12px;color:var(--mut)">Failed to load members</div>';
-  });
-}
-
-function buildMemberItem(m){
-  var el=document.createElement("div");el.className="member-item";
-  var avatarHtml=m.avatar_url
-    ?'<img src="'+m.avatar_url+'" alt="" onerror="this.style.display=\'none\';this.parentNode.textContent=\''+ini(m.name)+'\'">'
-    :ini(m.name);
-  el.innerHTML='<div class="member-av-wrap">'
-    +'<div class="member-av" style="background:'+ac(m.name)+'">'+avatarHtml+'</div>'
-    +'<div class="status-dot '+m.status+'"></div>'
-    +'</div>'
-    +'<div class="member-info">'
-    +'<div class="member-name">'+esc(m.name)+'</div>'
-    +'<div class="member-status-txt">'+esc(m.status)+'</div>'
-    +'</div>'
-    +'<i class="ti ti-message" style="color:var(--mut);font-size:14px"></i>';
-  el.onclick=function(){openDM(m);};
-  return el;
-}
-
-function openDM(m){
-  curDmUserId=m.id;
-  dmMsgStore.clear();
-  // Update DM header
-  var av=document.getElementById("dmAvatar");
-  if(m.avatar_url){av.innerHTML='<img src="'+m.avatar_url+'" alt="" onerror="this.innerHTML=\''+ini(m.name)+'\'">';av.style.background=ac(m.name);}
-  else{av.textContent=ini(m.name);av.style.background=ac(m.name);}
-  document.getElementById("dmUserName").textContent=m.name+(m.discriminator&&m.discriminator!=="0"?"#"+m.discriminator:"");
-  document.getElementById("dmUserStatus").textContent=m.status.charAt(0).toUpperCase()+m.status.slice(1);
-  document.getElementById("dmView").classList.add("open");
-  document.getElementById("dmInput").placeholder="Message "+m.name+"...";
-  loadDMHistory(m.id);
-  connectDMSSE(m.id);
-  setTimeout(function(){document.getElementById("dmInput").focus();},100);
-}
-
-function closeDM(){
-  document.getElementById("dmView").classList.remove("open");
-  if(dmEvtSrc){dmEvtSrc.close();dmEvtSrc=null;}
-  curDmUserId=null;
-}
-
-function loadDMHistory(userId){
-  var log=document.getElementById("dmMsgLog");
-  log.innerHTML='<div class="log-state"><i class="ti ti-loader spinning"></i><div>Loading…</div></div>';
-  dmMsgStore.clear();
-  fetch("/dm/"+userId).then(function(r){return r.json();}).then(function(msgs){
-    log.innerHTML="";
-    if(msgs.error){log.innerHTML='<div class="log-state"><i class="ti ti-lock"></i><div>'+esc(msgs.error)+"</div></div>";return;}
-    if(!msgs.length){log.innerHTML='<div class="log-state"><i class="ti ti-message-off"></i><div>No messages yet<br><span style="font-size:12px;color:var(--mut)">Send the first message!</span></div></div>';return;}
-    msgs.forEach(function(m){
-      dmMsgStore.set(m.id,m);
-      log.appendChild(buildMsg(m,true));
-    });
-    log.scrollTop=log.scrollHeight;
-  }).catch(function(){log.innerHTML='<div class="log-state"><i class="ti ti-wifi-off"></i><div>Failed to load</div></div>';});
-}
-
-function connectDMSSE(userId){
-  if(dmEvtSrc){dmEvtSrc.close();}
-  dmEvtSrc=new EventSource("/dm-events/"+userId);
-  dmEvtSrc.onmessage=function(e){
-    try{
-      var msg=JSON.parse(e.data);
-      if(msg.type==="ping")return;
-      var log=document.getElementById("dmMsgLog"),ph=log.querySelector(".log-state");if(ph)ph.remove();
-      dmMsgStore.set(msg.id,msg);
-      msgStore.set(msg.id,msg);
-      log.appendChild(buildMsg(msg,true));log.scrollTop=log.scrollHeight;
-      if(!msg.is_mine)showToast(msg.author+" sent you a DM","info","ti-message");
-    }catch(err){}
-  };
-}
-
-function doDmSend(){
-  if(!curDmUserId)return;
-  var input=document.getElementById("dmInput"),text=input.value.trim();
-  if(!text)return;
-  var btn=document.getElementById("dmSendBtn");btn.disabled=true;
-  fetch("/dm/"+curDmUserId,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message:text})})
-    .then(function(r){return r.json();})
-    .then(function(d){
-      if(d.success||d.id){
-        input.value="";input.style.height="";
-        var log=document.getElementById("dmMsgLog"),ph=log.querySelector(".log-state");if(ph)ph.remove();
-        dmMsgStore.set(d.id,d);msgStore.set(d.id,d);
-        log.appendChild(buildMsg(d,true));log.scrollTop=log.scrollHeight;
-      } else showToast(d.error||"Failed to send","err","ti-alert-circle");
-    }).catch(function(){showToast("Network error","err","ti-wifi-off");})
-    .finally(function(){btn.disabled=false;});
-}
-
-document.getElementById("dmInput").addEventListener("keydown",function(e){
-  if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();doDmSend();}
-});
-document.getElementById("dmInput").addEventListener("input",function(){
-  this.style.height="auto";this.style.height=Math.min(this.scrollHeight,120)+"px";
-});
 
 /* ── reply ────────────────────────────────────────── */
 function setReply(msgId){
@@ -790,7 +564,7 @@ function setReply(msgId){
   document.getElementById("msgInput").placeholder="Reply to "+msg.author+"...";
   document.getElementById("msgInput").focus();
   var t=document.getElementById("msg-"+msgId);
-  if(t){t.style.background="rgba(192,57,43,.2)";setTimeout(function(){t.style.background=""},900);}
+  if(t){t.style.background="rgba(88,101,242,.2)";setTimeout(function(){t.style.background=""},900);}
 }
 function cancelReply(){
   replyMsg=null;document.getElementById("replyBar").style.display="none";
@@ -864,7 +638,7 @@ function refreshBotPills(){
   opts.innerHTML="";
   var mn=document.getElementById("statusText").textContent||"Main Bot";
   var mp=document.createElement("div");mp.className="bot-pill"+(activeBotId==="main"?" active":"");mp.dataset.id="main";
-  mp.innerHTML='<div class="mini-av" style="background:#c0392b">'+ini(mn)+"</div><span>"+esc(mn)+"</span>";
+  mp.innerHTML='<div class="mini-av" style="background:#5865f2">'+ini(mn)+"</div><span>"+esc(mn)+"</span>";
   mp.onclick=function(){selectBot("main");};opts.appendChild(mp);
   Object.keys(customBots).forEach(function(id){
     var b=customBots[id],pill=document.createElement("div");
@@ -883,7 +657,7 @@ function selectBot(id){
 /* ── misc ─────────────────────────────────────────── */
 function scrollToMsg(id){
   var el=document.getElementById("msg-"+id);
-  if(el){el.scrollIntoView({behavior:"smooth",block:"center"});el.style.background="rgba(192,57,43,.25)";setTimeout(function(){el.style.background=""},1200);}
+  if(el){el.scrollIntoView({behavior:"smooth",block:"center"});el.style.background="rgba(88,101,242,.25)";setTimeout(function(){el.style.background=""},1200);}
 }
 function jumpToNotif(){
   if(lastNotifId){scrollToMsg(lastNotifId);notifCount=0;document.getElementById("notifBadge").style.display="none";}
