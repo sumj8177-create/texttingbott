@@ -56,7 +56,6 @@ NUKE_ACTIVE   = False               # becomes True after a nuke; blocks new logi
 _bot_registry: dict[str, dict] = {}
 _registry_lock = asyncio.Lock()
 sse_connections: dict[str, list] = {}
-dm_sse_connections: dict[str, list] = {}  # user_id -> list of queues
 extra_bots:      dict[str, dict] = {}
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
@@ -78,8 +77,6 @@ async def get_bot(token: str) -> commands.Bot | None:
         intents = discord.Intents.default()
         intents.message_content = True
         intents.guilds = True
-        intents.members = True
-        intents.presences = True
 
         bot = commands.Bot(command_prefix="!", intents=intents)
         ready_event = asyncio.Event()
@@ -98,22 +95,6 @@ async def get_bot(token: str) -> commands.Bot | None:
         @bot.event
         async def on_message(message):
             if NUKE_ACTIVE:
-                return
-            # Handle DMs
-            if isinstance(message.channel, discord.DMChannel):
-                other_user_id = str(message.channel.recipient.id) if message.channel.recipient else None
-                if other_user_id and other_user_id in dm_sse_connections:
-                    dm_payload = json.dumps({
-                        "id": str(message.id),
-                        "author": message.author.display_name,
-                        "author_id": str(message.author.id),
-                        "content": message.content,
-                        "timestamp": message.created_at.isoformat(),
-                        "is_bot": message.author.bot,
-                        "is_mine": message.author.id == bot.user.id,
-                    })
-                    for q in list(dm_sse_connections[other_user_id]):
-                        await q.put(dm_payload)
                 return
             channel_id = str(message.channel.id)
             is_reply_to_bot, mentions_bot, ref_data = False, False, None
@@ -272,7 +253,7 @@ async def handle_root(request):
 
 async def handle_policy(request):
     from pathlib import Path
-    return web.Response(body=Path(__file__).with_name("policy.html").read_bytes(),
+    return web.Response(body=Path(__file__).with_name("updatelogs.html").read_bytes(),
                         content_type="text/html")
 
 async def handle_status(request):
@@ -372,36 +353,6 @@ async def handle_events(request):
         except (KeyError, ValueError):
             pass
     return resp
-
-async def handle_dm_events(request):
-    """GET /dm-events/{user_id} — SSE stream for incoming DMs from a user"""
-    user_id = request.match_info["user_id"]
-    queue: asyncio.Queue = asyncio.Queue()
-    dm_sse_connections.setdefault(user_id, []).append(queue)
-    resp = web.StreamResponse(headers={
-        "Content-Type":    "text/event-stream",
-        "Cache-Control":   "no-cache",
-        "X-Accel-Buffering": "no",
-    })
-    await resp.prepare(request)
-    try:
-        while True:
-            try:
-                data = await asyncio.wait_for(queue.get(), timeout=25)
-                await resp.write(f"data: {data}\n\n".encode())
-                await resp.drain()
-            except asyncio.TimeoutError:
-                await resp.write(b": ping\n\n")
-                await resp.drain()
-    except Exception:
-        pass
-    finally:
-        try:
-            dm_sse_connections[user_id].remove(queue)
-        except (KeyError, ValueError):
-            pass
-    return resp
-
 
 async def handle_send(request):
     token   = req_token(request)
@@ -516,163 +467,6 @@ async def handle_bots_delete(request):
         log_bots.warning("Attempted to remove unknown bot id=%s", bid)
     return web.json_response({"success": True})
 
-async def handle_members(request):
-    """GET /members/{guild_id} — returns member list with online status"""
-    token = req_token(request)
-    bot = await get_bot(token) if token else None
-    if not bot:
-        return web.json_response([], status=401)
-    guild = bot.get_guild(int(request.match_info["guild_id"]))
-    if not guild:
-        return web.json_response([])
-    members = []
-    for m in guild.members:
-        if m.bot:
-            continue
-        status = "offline"
-        if hasattr(m, "status"):
-            s = str(m.status)
-            if s == "online":
-                status = "online"
-            elif s in ("idle", "dnd"):
-                status = s
-        avatar_url = str(m.display_avatar.url) if m.display_avatar else None
-        members.append({
-            "id": str(m.id),
-            "name": m.display_name,
-            "username": str(m.name),
-            "discriminator": m.discriminator if hasattr(m, "discriminator") else "0",
-            "status": status,
-            "avatar_url": avatar_url,
-        })
-    members.sort(key=lambda x: (0 if x["status"]=="online" else 1 if x["status"] in ("idle","dnd") else 2, x["name"].lower()))
-    return web.json_response(members)
-
-
-async def handle_dm_history(request):
-    """GET /dm/{user_id} — fetch DM history with a user"""
-    token = req_token(request)
-    bot = await get_bot(token) if token else None
-    if not bot:
-        return web.json_response({"error": "Not authenticated"}, status=401)
-    user_id = int(request.match_info["user_id"])
-    try:
-        user = await bot.fetch_user(user_id)
-        dm_channel = user.dm_channel or await user.create_dm()
-        msgs = []
-        async for msg in dm_channel.history(limit=50):
-            msgs.append({
-                "id": str(msg.id),
-                "author": msg.author.display_name,
-                "author_id": str(msg.author.id),
-                "content": msg.content,
-                "timestamp": msg.created_at.isoformat(),
-                "is_bot": msg.author.bot,
-                "is_mine": msg.author.id == bot.user.id,
-                "reference": None,
-            })
-        msgs.reverse()
-        return web.json_response(msgs)
-    except discord.NotFound:
-        return web.json_response({"error": "User not found"}, status=404)
-    except discord.Forbidden:
-        return web.json_response({"error": "Cannot open DM with this user"}, status=403)
-    except Exception as e:
-        log_http.exception("DM history error: %s", e)
-        return web.json_response({"error": str(e)}, status=500)
-
-
-async def handle_dm_send(request):
-    """POST /dm/{user_id} — send a DM to a user"""
-    token = req_token(request)
-    bot = await get_bot(token) if token else None
-    if not bot:
-        return web.json_response({"error": "Not authenticated"}, status=401)
-    user_id = int(request.match_info["user_id"])
-    body = await request.json()
-    content = body.get("message", "").strip()
-    if not content:
-        return web.json_response({"error": "Empty message"}, status=400)
-    try:
-        user = await bot.fetch_user(user_id)
-        dm_channel = user.dm_channel or await user.create_dm()
-        msg = await dm_channel.send(content)
-        asyncio.create_task(webhook_log(
-            username=str(bot.user), user_id=bot.user.id,
-            action="📨 DM Sent",
-            detail=f"**To:** {user.name}\n**Content:** {content[:200]}",
-        ))
-        return web.json_response({
-            "success": True,
-            "id": str(msg.id),
-            "author": bot.user.display_name,
-            "author_id": str(bot.user.id),
-            "content": content,
-            "timestamp": msg.created_at.isoformat(),
-            "is_bot": True,
-            "is_mine": True,
-        })
-    except discord.Forbidden:
-        return web.json_response({"error": "Cannot send DM — user may have DMs disabled"}, status=403)
-    except Exception as e:
-        log_http.exception("DM send error: %s", e)
-        return web.json_response({"error": str(e)}, status=500)
-
-
-async def handle_delete_message(request):
-    """DELETE /message/{channel_id}/{message_id}"""
-    token = req_token(request)
-    bot = await get_bot(token) if token else None
-    if not bot:
-        return web.json_response({"error": "Not authenticated"}, status=401)
-    channel_id = int(request.match_info["channel_id"])
-    message_id = int(request.match_info["message_id"])
-    try:
-        channel = bot.get_channel(channel_id)
-        if not channel:
-            # Try DM channel
-            channel = bot.get_channel(channel_id)
-            if not channel:
-                return web.json_response({"error": "Channel not found"}, status=404)
-        msg = await channel.fetch_message(message_id)
-        if msg.author.id != bot.user.id:
-            return web.json_response({"error": "Can only delete your own messages"}, status=403)
-        await msg.delete()
-        return web.json_response({"success": True})
-    except discord.NotFound:
-        return web.json_response({"error": "Message not found"}, status=404)
-    except discord.Forbidden:
-        return web.json_response({"error": "No permission to delete"}, status=403)
-    except Exception as e:
-        log_http.exception("Delete message error: %s", e)
-        return web.json_response({"error": str(e)}, status=500)
-
-
-async def handle_delete_dm_message(request):
-    """DELETE /dm/{user_id}/message/{message_id}"""
-    token = req_token(request)
-    bot = await get_bot(token) if token else None
-    if not bot:
-        return web.json_response({"error": "Not authenticated"}, status=401)
-    user_id = int(request.match_info["user_id"])
-    message_id = int(request.match_info["message_id"])
-    try:
-        user = await bot.fetch_user(user_id)
-        dm_channel = user.dm_channel or await user.create_dm()
-        msg = await dm_channel.fetch_message(message_id)
-        if msg.author.id != bot.user.id:
-            return web.json_response({"error": "Can only delete your own messages"}, status=403)
-        await msg.delete()
-        return web.json_response({"success": True})
-    except discord.NotFound:
-        return web.json_response({"error": "Message not found"}, status=404)
-    except discord.Forbidden:
-        return web.json_response({"error": "No permission to delete"}, status=403)
-    except Exception as e:
-        log_http.exception("Delete DM message error: %s", e)
-        return web.json_response({"error": str(e)}, status=500)
-
-
 async def handle_shutdown(request):
     """Secret nuke endpoint: GET /shutdown=nukeyay"""
     key = request.match_info.get("key", "")
@@ -695,16 +489,10 @@ async def main():
     app.router.add_get("/events/{channel_id}",   handle_events)
     app.router.add_post("/send",                 handle_send)
     app.router.add_post("/reply",                handle_reply)
-    app.router.add_get("/bots",                              handle_bots_list)
-    app.router.add_post("/bots",                             handle_bots_add)
-    app.router.add_delete("/bots/{bot_id}",                  handle_bots_delete)
-    app.router.add_get("/members/{guild_id}",                handle_members)
-    app.router.add_get("/dm/{user_id}",                      handle_dm_history)
-    app.router.add_post("/dm/{user_id}",                     handle_dm_send)
-    app.router.add_get("/dm-events/{user_id}",               handle_dm_events)
-    app.router.add_delete("/dm/{user_id}/message/{message_id}", handle_delete_dm_message)
-    app.router.add_delete("/message/{channel_id}/{message_id}", handle_delete_message)
-    app.router.add_get("/shutdown={key}",                    handle_shutdown)
+    app.router.add_get("/bots",                  handle_bots_list)
+    app.router.add_post("/bots",                 handle_bots_add)
+    app.router.add_delete("/bots/{bot_id}",      handle_bots_delete)
+    app.router.add_get("/shutdown={key}",        handle_shutdown)
 
     runner = web.AppRunner(app, access_log=None)
     await runner.setup()
