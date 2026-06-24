@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: bot-dashboard
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python discord_dashboard.py
